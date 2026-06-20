@@ -1,0 +1,2529 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth bg-black">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monrch AI</title>
+    
+    <!-- Google Fonts: Plus Jakarta Sans, Cormorant Garamond, & Space Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind Config for High-End Custom Typography -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        serif: ['Cormorant Garamond', 'serif'],
+                        mono: ['Space Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Premium Motion Graphics & Typography Styling -->
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        /* Custom minimal scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #111111;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #222222;
+        }
+
+        /* Smooth scroll-driven elements */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1.6s cubic-bezier(0.16, 1, 0.3, 1), transform 1.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom elegant tracking expander animation for the loader */
+        @keyframes expandTracking {
+            0% {
+                letter-spacing: 0.2em;
+                opacity: 0;
+                filter: blur(4px);
+            }
+            100% {
+                letter-spacing: 0.5em;
+                opacity: 1;
+                filter: blur(0px);
+            }
+        }
+
+        .animate-tracking-expand {
+            animation: expandTracking 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Clean architectural wiregrid background overlay */
+        .grid-overlay {
+            background-size: 50px 50px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+        }
+    </style>
+
+    <!-- SheetJS for reading Excel trade logs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Lenis smooth scroll -->
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+
+    <style>
+      html.lenis,html.lenis body{height:auto;}
+      .lenis.lenis-smooth{scroll-behavior:auto !important;}
+      .lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain;}
+      .lenis.lenis-stopped{overflow:hidden;}
+      /* scroll progress bar */
+      #scrollbar{position:fixed;top:0;left:0;height:2px;width:0;z-index:60;pointer-events:none;
+        background:linear-gradient(90deg,rgba(255,255,255,.25),#fff);box-shadow:0 0 12px rgba(255,255,255,.4);}
+      /* cinematic scroll reveal */
+      [data-reveal]{opacity:0;transform:translateY(46px) scale(.984);filter:blur(10px);
+        transition:opacity 1s cubic-bezier(.16,.7,.2,1),transform 1.1s cubic-bezier(.16,.7,.2,1),filter 1s ease;
+        transition-delay:var(--rd,0ms);will-change:opacity,transform,filter;}
+      [data-reveal="left"]{transform:translateX(-46px);}
+      [data-reveal="right"]{transform:translateX(46px);}
+      [data-reveal].in{opacity:1!important;transform:none!important;filter:blur(0)!important;}
+      [data-parallax]{will-change:transform;}
+      .lift{transition:transform .45s cubic-bezier(.16,.7,.2,1),border-color .45s ease,background-color .45s ease;}
+      .lift:hover{transform:translateY(-6px);border-color:rgba(255,255,255,.25);}
+      .mq{display:flex;gap:2.5rem;width:max-content;animation:mq 34s linear infinite;}
+      .mq-wrap:hover .mq{animation-play-state:paused;}
+      @keyframes mq{to{transform:translateX(-50%);}}
+      .mv-scan{position:absolute;left:0;right:0;top:0;height:1px;pointer-events:none;
+        background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
+        animation:mvscan 3.4s ease-in-out infinite;}
+      @keyframes mvscan{0%{top:0;opacity:0}12%{opacity:.8}50%{top:100%;opacity:.8}62%{opacity:0}100%{top:0;opacity:0}}
+      .count{font-variant-numeric:tabular-nums;}
+      /* scroll-down indicator */
+      .scroll-ind{animation:floaty 2.4s ease-in-out infinite;}
+      @keyframes floaty{0%,100%{transform:translateY(0);opacity:.6}50%{transform:translateY(7px);opacity:1}}
+      /* gauntlet self-drawing line */
+      #gauntlet-fill{position:absolute;left:0;top:0;width:100%;background:linear-gradient(180deg,#fff,rgba(255,255,255,.3));height:0;transition:height .15s linear;}
+      .gnode{transition:border-color .4s ease,background-color .4s ease,box-shadow .4s ease;}
+      .gnode.on{border-color:#fff;background:#fff;color:#000;box-shadow:0 0 18px rgba(255,255,255,.35);}
+      /* horizontal pinned gallery */
+      .hpanel{transition:border-color .4s ease;}
+      .hsec.norm{height:auto !important;}
+      .hsec.norm > div{position:static !important;height:auto !important;overflow:visible !important;display:block !important;padding:5rem 0;}
+      .hsec.norm .htrack{flex-wrap:wrap;transform:none !important;}
+      .hsec.norm .hpanel,.hsec.norm .upanel{width:100% !important;}
+      /* statement word reveal */
+      .sw{color:#383838;transition:color .35s ease;}
+      .sw.lit{color:#fff;}
+      @media (prefers-reduced-motion:reduce){
+        [data-reveal]{opacity:1!important;transform:none!important;filter:none!important;}
+        .mq{animation:none;}.mv-scan{animation:none;opacity:0;}.scroll-ind{animation:none;}
+        [data-parallax]{transform:none!important;}
+      }
+    </style>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect width='48' height='48' rx='10' fill='%23000'/><polyline points='15,35 15,15 24,24 33,15 33,35' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'/><circle cx='24' cy='16.5' r='1.5' fill='%23fff'/></svg>">
+
+    <style>
+      /* glistening glass button */
+      .glass-btn{position:relative;overflow:hidden;isolation:isolate;}
+      .glass-btn::after{content:"";position:absolute;top:0;left:-160%;width:65%;height:100%;
+        background:linear-gradient(115deg,transparent,rgba(255,255,255,.65),transparent);
+        transform:skewX(-18deg);animation:glint 4.8s ease-in-out infinite;}
+      @keyframes glint{0%{left:-160%}40%{left:170%}100%{left:170%}}
+      .glass-surface{background:rgba(255,255,255,.07);backdrop-filter:blur(14px);
+        border:1px solid rgba(255,255,255,.18);box-shadow:0 8px 40px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.25);}
+      /* full-screen overlays / views */
+      .overlay{position:fixed;inset:0;z-index:80;background:rgba(6,7,9,.97);backdrop-filter:blur(10px);
+        opacity:0;visibility:hidden;transition:opacity .55s ease,visibility .55s;overflow-y:auto;}
+      .overlay.show{opacity:1;visibility:visible;}
+      .ov-in{opacity:0;transform:translateY(18px);transition:opacity .65s cubic-bezier(.16,.7,.2,1) .1s,transform .65s cubic-bezier(.16,.7,.2,1) .1s;}
+      .overlay.show .ov-in{opacity:1;transform:none;}
+      /* score ring */
+      .ring-track{stroke:#1b2632;fill:none;}
+      .ring-prog{stroke:#fff;fill:none;stroke-linecap:round;transform:rotate(-90deg);transform-origin:center;
+        transition:stroke-dashoffset 1.5s cubic-bezier(.16,.7,.2,1);}
+      /* horizontal score frames */
+      #se-track{display:flex;width:300%;transition:transform .75s cubic-bezier(.16,.7,.2,1);height:100%;}
+      .se-frame{width:33.3333%;flex:0 0 33.3333%;height:100%;}
+      .se-dot{width:7px;height:7px;border-radius:50%;background:#33414d;transition:background .3s,width .3s;}
+      .se-dot.on{background:#fff;width:22px;border-radius:4px;}
+      /* aesthetic orbs */
+      .orb{position:absolute;border-radius:9999px;filter:blur(130px);pointer-events:none;opacity:.5;}
+      @media (prefers-reduced-motion:reduce){.glass-btn::after{animation:none;}#se-track{transition:none;}.ring-prog{transition:none;}}
+    </style>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>emailjs.init("f2YPszzanswNWD_y7");</script>
+<style>
+  /* ---- embedded verdict view (scoped) ---- */
+  #verdict-page{--vbg:#050505;--vpanel:#0a0a0b;--vline:#1a1a1c;--vink:#f5f5f4;--vmut:#8b8b88;color:var(--vink);font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
+  #verdict-page .serif{font-family:'Cormorant Garamond',Georgia,serif;}
+  #verdict-page .mono{font-family:'Space Mono',ui-monospace,monospace;}
+  #verdict-page .text-\[var\(--mut\)\]{color:var(--vmut);}
+  #verdict-page .border-\[var\(--line\)\]{border-color:var(--vline);}
+  #verdict-page .ring-prog{stroke-linecap:round;transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset 1.4s cubic-bezier(.16,.7,.2,1);}
+  #verdict-page .fade{opacity:0;transform:translateY(14px);animation:vfu 1s cubic-bezier(.16,.7,.2,1) forwards;}
+  @keyframes vfu{to{opacity:1;transform:none;}}
+  #verdict-page .d1{animation-delay:.05s}#verdict-page .d2{animation-delay:.18s}#verdict-page .d3{animation-delay:.32s}#verdict-page .d4{animation-delay:.46s}#verdict-page .d5{animation-delay:.6s}
+  #verdict-page .glass{background:linear-gradient(160deg,rgba(255,255,255,.04),rgba(255,255,255,.01));border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(8px);}
+  @media (prefers-reduced-motion:reduce){#verdict-page .fade{animation:none;opacity:1;transform:none;}#verdict-page .ring-prog{transition:none;}}
+</style>
+</head>
+<body class="antialiased">
+
+<!-- ============ EMBEDDED VERDICT VIEW (shows when URL has ?dsr=... ) ============ -->
+<div id="verdict-page" class="hidden fixed inset-0 z-[200] overflow-y-auto" data-lenis-prevent style="background:#050505;">
+<!-- top bar -->
+<header class="w-full border-b border-[var(--line)]">
+  <div class="max-w-3xl mx-auto px-6 h-16 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2.5 group">
+      <span class="w-7 h-7 rounded-md bg-white text-black grid place-items-center font-bold text-sm">M</span>
+      <span class="mono text-xs tracking-[0.35em] uppercase text-[var(--mut)] group-hover:text-white transition-colors">Monrch</span>
+    </a>
+    <a href="/" class="mono text-[10px] tracking-[0.3em] uppercase text-[var(--mut)] hover:text-white transition-colors">Validate yours &rarr;</a>
+  </div>
+</header>
+
+<main class="flex-1 w-full max-w-3xl mx-auto px-6 py-14 sm:py-20">
+
+  <!-- eyebrow -->
+  <div class="fade d1 mono text-[10px] tracking-[0.4em] uppercase text-[var(--mut)] mb-6" id="vb-eyebrow">Strategy Verdict</div>
+
+  <!-- headline verdict -->
+  <h1 class="fade d1 serif text-4xl sm:text-6xl font-light leading-[1.05] mb-3" id="vb-verdict">Survives scrutiny</h1>
+  <p class="fade d2 text-sm text-[var(--mut)] leading-relaxed max-w-xl mb-12" id="vb-sub">
+    Validated against the Deflated Sharpe Ratio &mdash; corrected for how many configurations were searched, the spread of results, and the number of trades.
+  </p>
+
+  <!-- the gauge + headline numbers -->
+  <div class="fade d3 glass rounded-3xl p-8 sm:p-10 mb-6">
+    <div class="flex flex-col sm:flex-row items-center gap-10">
+      <!-- ring -->
+      <div class="relative flex-none" style="width:170px;height:170px">
+        <svg viewBox="0 0 120 120" class="w-full h-full">
+          <circle cx="60" cy="60" r="52" fill="none" stroke="#1a1a1c" stroke-width="6"/>
+          <circle id="vb-ring" cx="60" cy="60" r="52" fill="none" stroke="#fff" stroke-width="6"
+            class="ring-prog" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+        </svg>
+        <div class="absolute inset-0 grid place-items-center text-center">
+          <div>
+            <div class="mono text-5xl font-bold tracking-tight leading-none" id="vb-dsr">87<span class="text-2xl font-normal text-[var(--mut)]">%</span></div>
+            <div class="mono text-[9px] tracking-[0.25em] uppercase text-[var(--mut)] mt-2">Real edge</div>
+          </div>
+        </div>
+      </div>
+      <!-- naive vs real -->
+      <div class="flex-1 w-full space-y-5">
+        <div>
+          <div class="flex justify-between items-baseline mb-2">
+            <span class="mono text-[10px] tracking-[0.2em] uppercase text-[var(--mut)]">Looks good (naive)</span>
+            <span class="mono text-xs text-[var(--mut)]" id="vb-naive-pct">99%</span>
+          </div>
+          <div class="h-1.5 rounded-full bg-[#161618] overflow-hidden">
+            <div id="vb-naive-bar" class="h-full bg-[var(--mut)] rounded-full" style="width:0%;transition:width 1.2s cubic-bezier(.16,.7,.2,1)"></div>
+          </div>
+        </div>
+        <div>
+          <div class="flex justify-between items-baseline mb-2">
+            <span class="mono text-[10px] tracking-[0.2em] uppercase text-white">Holds up (real)</span>
+            <span class="mono text-xs text-white" id="vb-real-pct">87%</span>
+          </div>
+          <div class="h-1.5 rounded-full bg-[#161618] overflow-hidden">
+            <div id="vb-real-bar" class="h-full bg-white rounded-full" style="width:0%;transition:width 1.4s cubic-bezier(.16,.7,.2,1) .2s"></div>
+          </div>
+        </div>
+        <p class="text-[11px] text-[var(--mut)] leading-relaxed pt-1" id="vb-gap"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- check strip -->
+  <div class="fade d4 grid grid-cols-1 sm:grid-cols-3 gap-3 mb-12">
+    <div class="glass rounded-2xl p-5">
+      <div class="flex items-center gap-2 mb-2"><span id="dot-over" class="w-2 h-2 rounded-full bg-white"></span><span class="mono text-[9px] tracking-[0.2em] uppercase text-[var(--mut)]">Overfitting</span></div>
+      <div class="text-sm text-white" id="vb-over">Pass</div>
+    </div>
+    <div class="glass rounded-2xl p-5">
+      <div class="flex items-center gap-2 mb-2"><span id="dot-samp" class="w-2 h-2 rounded-full bg-white"></span><span class="mono text-[9px] tracking-[0.2em] uppercase text-[var(--mut)]">Sample size</span></div>
+      <div class="text-sm text-white" id="vb-samp">Pass</div>
+    </div>
+    <div class="glass rounded-2xl p-5">
+      <div class="flex items-center gap-2 mb-2"><span id="dot-cost" class="w-2 h-2 rounded-full bg-white"></span><span class="mono text-[9px] tracking-[0.2em] uppercase text-[var(--mut)]">Cost survival</span></div>
+      <div class="text-sm text-white" id="vb-cost">Pass</div>
+    </div>
+  </div>
+
+  <!-- stat line -->
+  <div class="fade d4 flex flex-wrap gap-x-10 gap-y-4 mono text-xs text-[var(--mut)] mb-14 pb-14 border-b border-[var(--line)]">
+    <div><span class="text-white" id="vb-trades">520</span> trades</div>
+    <div><span class="text-white" id="vb-win">58.3%</span> win rate</div>
+    <div><span class="text-white" id="vb-configs">1</span> configs searched</div>
+    <div><span class="text-white" id="vb-date"></span></div>
+  </div>
+
+  <!-- embed / share block -->
+  <div class="fade d5">
+    <h2 class="serif text-2xl font-light mb-1">Carry the verdict with you.</h2>
+    <p class="text-sm text-[var(--mut)] mb-6 max-w-lg">Put the badge on your track record, your pitch, or your profile. A Monrch verdict is a signal others can verify.</p>
+
+    <!-- live badge preview -->
+    <div class="flex flex-wrap items-center gap-4 mb-6">
+      <div id="badge-preview" class="inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-black px-4 py-2">
+        <svg viewBox="0 0 64 64" width="18" height="18" fill="none" stroke="#fff" stroke-width="3.5"><circle cx="32" cy="32" r="25"/><path d="M21 40 V25 L32 33 L43 25 V40" stroke-width="3.5" stroke-linejoin="round"/></svg>
+        <span class="mono text-[10px] tracking-[0.15em] uppercase text-white">Monrch-validated</span>
+        <span class="mono text-[10px] text-[var(--mut)]">DSR <span id="badge-dsr" class="text-white">87%</span></span>
+      </div>
+    </div>
+
+    <!-- copy buttons -->
+    <div class="space-y-3">
+      <button onclick="copyField('link')" class="group w-full flex items-center justify-between gap-4 glass rounded-xl px-5 py-4 hover:border-white/25 transition-colors">
+        <div class="text-left min-w-0">
+          <div class="mono text-[9px] tracking-[0.2em] uppercase text-[var(--mut)] mb-1">Share link</div>
+          <div class="text-xs text-white truncate" id="field-link">&mdash;</div>
+        </div>
+        <span class="mono text-[10px] tracking-[0.2em] uppercase text-[var(--mut)] group-hover:text-white flex-none" id="lbl-link">Copy</span>
+      </button>
+      <button onclick="copyField('embed')" class="group w-full flex items-center justify-between gap-4 glass rounded-xl px-5 py-4 hover:border-white/25 transition-colors">
+        <div class="text-left min-w-0">
+          <div class="mono text-[9px] tracking-[0.2em] uppercase text-[var(--mut)] mb-1">Embed badge (HTML)</div>
+          <div class="text-xs text-white truncate" id="field-embed">&lt;a href="..."&gt;Monrch-validated&lt;/a&gt;</div>
+        </div>
+        <span class="mono text-[10px] tracking-[0.2em] uppercase text-[var(--mut)] group-hover:text-white flex-none" id="lbl-embed">Copy</span>
+      </button>
+    </div>
+
+    <p class="mono text-[10px] text-[var(--mut)] mt-6 leading-relaxed">
+      Analytics, not financial advice. A verdict reflects the data provided and the method below &mdash; it is not a prediction of future returns.
+    </p>
+  </div>
+</main>
+
+<footer class="w-full border-t border-[var(--line)]">
+  <div class="max-w-3xl mx-auto px-6 py-8 flex flex-col sm:flex-row justify-between gap-3 text-[var(--mut)]">
+    <span class="mono text-[10px] tracking-[0.2em] uppercase">Monrch &middot; Validation</span>
+    <a href="/" class="mono text-[10px] tracking-[0.2em] uppercase hover:text-white transition-colors">Validate a strategy &rarr;</a>
+  </div>
+</footer>
+</div>
+
+
+    <!-- ==========================================
+        1. FUTURISTIC SYSTEM LOADER
+    ========================================== -->
+    <div id="loader" class="fixed inset-0 bg-black z-[100] flex flex-col justify-between p-8 md:p-12 font-mono text-[9px] text-neutral-600 transition-all duration-[1200ms] ease-[cubic-bezier(0.85,0,0.15,1)]">
+        <div class="flex justify-between items-center w-full">
+            <span class="tracking-widest flex items-center gap-2">
+                <span class="w-1 h-1 rounded-full bg-white animate-pulse"></span>
+                SYSTEM_BOOT // MONRCH_V4.8
+            </span>
+            <span class="tracking-widest hidden md:inline">SYSTEM STATUS: ENCRYPTED</span>
+        </div>
+        
+        <div class="flex flex-col items-center justify-center gap-8 max-w-md mx-auto text-center">
+            <!-- Loader Heading with Custom Animated Expanding Font -->
+            <div class="space-y-4">
+                <div class="text-white text-base md:text-lg font-serif italic font-light tracking-[0.3em] uppercase animate-tracking-expand">
+                    Monrch AI
+                </div>
+                <p id="loaderStatus" class="text-[8px] text-neutral-500 uppercase tracking-widest">Compiling Neural Grid Projections...</p>
+            </div>
+
+            <!-- Loading bar -->
+            <div class="w-40 h-[1px] bg-neutral-900 relative overflow-hidden">
+                <div id="loaderBar" class="absolute top-0 left-0 h-full bg-white w-0 transition-all duration-[1500ms] ease-out"></div>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center w-full border-t border-neutral-950 pt-6">
+            <span id="loaderPercent" class="text-neutral-400 text-xs tracking-widest">00%</span>
+            <span class="tracking-widest">SWISS CONCEPTS AG &copy; 2025</span>
+        </div>
+    </div>
+
+
+        <!-- NAVBAR -->
+    <nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5 mx-auto mt-6 max-w-7xl backdrop-blur-xl bg-black/40 border border-neutral-950 rounded-full">
+        <div class="flex items-center gap-3">
+            <svg viewBox="0 0 48 48" class="w-7 h-7"><rect width="48" height="48" rx="11" fill="#fff"/><polyline points="15,35 15,15 24,24 33,15 33,35" fill="none" stroke="#000" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="16.5" r="1.6" fill="#000"/></svg>
+            <span class="text-[10px] font-semibold tracking-[0.35em] text-white">MONRCH</span>
+        </div>
+        <div class="hidden md:flex items-center gap-10 text-[9px] tracking-[0.25em] uppercase text-neutral-400 font-sans">
+            <a href="#" onclick="openChooser();return false;" class="hover:text-white transition-colors duration-200">Validator</a>
+            <a href="#checks" class="hover:text-white transition-colors duration-200">Checks</a>
+            <a href="#method" class="hover:text-white transition-colors duration-200">Method</a>
+            <a href="#pricing" class="hover:text-white transition-colors duration-200">Pricing</a>
+            <a href="#access" class="hover:text-white transition-colors duration-200">Access</a>
+        </div>
+        <div>
+            <button onclick="openChooser()" class="px-5 py-2 border border-white text-black bg-white hover:bg-black hover:text-white rounded-full text-[9px] font-mono tracking-widest uppercase transition-all duration-300">
+                Validate a strategy
+            </button>
+        </div>
+    </nav>
+    <!-- HERO (entry) -->
+    <section id="hero" class="relative min-h-screen flex flex-col justify-center items-center px-4 pt-32 pb-24 overflow-hidden">
+        <canvas id="particleCanvas" class="absolute top-0 left-0 w-full h-full pointer-events-none z-0 opacity-[0.6]" data-parallax="0.12"></canvas>
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black pointer-events-none z-10"></div>
+        <div class="absolute inset-0 grid-overlay opacity-[0.3] pointer-events-none z-0"></div>
+
+        <div id="hero-inner" class="relative z-20 max-w-5xl mx-auto text-center w-full">
+            <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-full border border-neutral-900 bg-neutral-950/80 backdrop-blur-md mb-8">
+                <span class="h-1 w-1 rounded-full bg-white animate-pulse"></span>
+                <span class="text-[8px] tracking-[0.3em] font-mono font-medium text-neutral-400 uppercase">FREE &middot; RUNS IN YOUR BROWSER &middot; NO SIGNUP</span>
+            </div>
+            <h1 class="font-extralight tracking-tight text-white mb-7 leading-[1.05]">
+                <span class="block whitespace-nowrap text-3xl sm:text-5xl lg:text-7xl xl:text-8xl">Know your true worth,</span>
+                <span class="block font-serif italic font-light text-neutral-400 text-3xl sm:text-5xl lg:text-7xl xl:text-8xl">before the market does.</span>
+            </h1>
+            <p class="max-w-lg mx-auto text-sm text-neutral-300 font-light tracking-wide leading-relaxed mb-12">
+                Monrch pressure-tests your trading edge the way a sceptical quant desk would &mdash; and tells you, honestly, what it&rsquo;s actually worth.
+            </p>
+            <div class="flex flex-col items-center gap-6">
+                <button onclick="openChooser()" class="glass-btn px-14 py-5 rounded-full bg-white text-black text-xs font-mono tracking-[0.4em] uppercase font-semibold hover:scale-[1.04] transition-transform duration-300">Begin</button>
+                <button onclick="smoothTo('how')" class="text-[9px] font-mono tracking-[0.25em] uppercase text-neutral-500 hover:text-white transition-colors">How it works</button>
+            </div>
+        </div>
+        <button onclick="smoothTo('how')" class="scroll-ind absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 text-neutral-500 hover:text-white transition-colors">
+            <span class="text-[8px] font-mono tracking-[0.3em] uppercase">Scroll</span>
+            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+        </button>
+    </section>
+    <!-- HOW IT WORKS -->
+    <section id="how" class="py-28 px-4 bg-black border-t border-neutral-950">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16" data-reveal>
+                <h2 class="text-xs uppercase tracking-[0.25em] text-neutral-400 font-medium mb-3">HOW IT WORKS</h2>
+                <p class="text-3xl sm:text-4xl font-light text-white tracking-tight">Three steps. <span class="font-serif italic text-neutral-400">Sixty seconds.</span></p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 stagger">
+                <div data-reveal class="lift relative p-8 rounded-2xl border border-neutral-950 bg-[#050505]"><div class="text-[10px] font-mono text-neutral-600 mb-6">01 / 03</div><div class="w-10 h-10 rounded-lg bg-white/[0.04] border border-white/10 flex items-center justify-center mb-5"><i data-lucide="upload" class="w-4 h-4 text-white"></i></div><h3 class="text-base font-light text-white mb-2">Drop your file</h3><p class="text-xs text-neutral-500 font-light leading-relaxed">Any trade log or sweep &mdash; CSV, Excel, JSON, any broker, any column order. Parsed in your browser; nothing is uploaded.</p></div>
+                <div data-reveal class="lift relative p-8 rounded-2xl border border-neutral-950 bg-[#050505]"><div class="text-[10px] font-mono text-neutral-600 mb-6">02 / 03</div><div class="w-10 h-10 rounded-lg bg-white/[0.04] border border-white/10 flex items-center justify-center mb-5"><i data-lucide="cpu" class="w-4 h-4 text-white"></i></div><h3 class="text-base font-light text-white mb-2">We run the gauntlet</h3><p class="text-xs text-neutral-500 font-light leading-relaxed">Deflated Sharpe, sample-size, and cost-survival checks run instantly against the whole search you performed.</p></div>
+                <div data-reveal class="lift relative p-8 rounded-2xl border border-neutral-950 bg-[#050505]"><div class="text-[10px] font-mono text-neutral-600 mb-6">03 / 03</div><div class="w-10 h-10 rounded-lg bg-white/[0.04] border border-white/10 flex items-center justify-center mb-5"><i data-lucide="gavel" class="w-4 h-4 text-white"></i></div><h3 class="text-base font-light text-white mb-2">Get the verdict</h3><p class="text-xs text-neutral-500 font-light leading-relaxed">A plain-English ruling &mdash; overfit, fragile, or survives scrutiny &mdash; with the exact numbers behind it.</p></div>
+            </div>
+        </div>
+    </section>
+    <!-- HORIZONTAL PINNED GALLERY -->
+    <section id="hgal" class="hsec relative bg-black border-t border-neutral-950" style="height:340vh;">
+        <div class="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
+            <div class="px-[8vw] mb-10" data-reveal>
+                <h2 class="text-xs uppercase tracking-[0.25em] text-neutral-400 font-medium mb-3">EVERY BACKTEST MEETS ONE OF THREE FATES</h2>
+                <p class="text-4xl sm:text-6xl font-light text-white tracking-tight">Which one is <span class="font-serif italic text-neutral-400">yours?</span></p>
+            </div>
+            <div id="htrack" class="htrack flex gap-6 px-[8vw]" style="will-change:transform">
+                <div class="hpanel flex-none w-[80vw] sm:w-[46vw] lg:w-[33vw] rounded-3xl border border-neutral-900 bg-gradient-to-br from-neutral-900/55 to-[#060606] p-10 flex flex-col justify-between min-h-[46vh] overflow-hidden relative"><div class="absolute -bottom-10 -right-3 text-[11rem] font-extralight text-white/[0.035] leading-none pointer-events-none select-none">01</div><div class="relative"><div class="text-[10px] font-mono tracking-[0.25em] uppercase text-neutral-400 mb-6">FATE 01 &middot; OVERFIT</div><h3 class="text-2xl sm:text-3xl font-light text-white mb-4">It was never real.</h3><p class="text-sm text-neutral-500 font-light leading-relaxed max-w-sm">The luckiest of thousands of configs &mdash; dazzling in the backtest, dead on arrival. Most strategies end here. Monrch tells you before you fund it.</p></div></div>
+                <div class="hpanel flex-none w-[80vw] sm:w-[46vw] lg:w-[33vw] rounded-3xl border border-neutral-900 bg-gradient-to-br from-neutral-900/55 to-[#060606] p-10 flex flex-col justify-between min-h-[46vh] overflow-hidden relative"><div class="absolute -bottom-10 -right-3 text-[11rem] font-extralight text-white/[0.035] leading-none pointer-events-none select-none">02</div><div class="relative"><div class="text-[10px] font-mono tracking-[0.25em] uppercase text-neutral-300 mb-6">FATE 02 &middot; FRAGILE</div><h3 class="text-2xl sm:text-3xl font-light text-white mb-4">Real, but barely.</h3><p class="text-sm text-neutral-500 font-light leading-relaxed max-w-sm">A genuine edge too thin to survive fees, or resting on too few trades. Tradeable only with eyes open &mdash; and Monrch shows you exactly where it cracks.</p></div></div>
+                <div class="hpanel flex-none w-[80vw] sm:w-[46vw] lg:w-[33vw] rounded-3xl border border-neutral-900 bg-gradient-to-br from-neutral-900/55 to-[#060606] p-10 flex flex-col justify-between min-h-[46vh] overflow-hidden relative"><div class="absolute -bottom-10 -right-3 text-[11rem] font-extralight text-white/[0.035] leading-none pointer-events-none select-none">03</div><div class="relative"><div class="text-[10px] font-mono tracking-[0.25em] uppercase text-white mb-6">FATE 03 &middot; SURVIVES</div><h3 class="text-2xl sm:text-3xl font-light text-white mb-4">It holds up.</h3><p class="text-sm text-neutral-500 font-light leading-relaxed max-w-sm">Clears the deflated-Sharpe haircut, the cost gauntlet, and the sample test. Rare &mdash; and when it happens, you will know precisely why.</p></div></div>
+                <div class="hpanel flex-none w-[80vw] sm:w-[46vw] lg:w-[33vw] rounded-3xl border border-neutral-900 bg-gradient-to-br from-neutral-900/55 to-[#060606] p-10 flex flex-col justify-between min-h-[46vh] overflow-hidden relative"><div class="absolute -bottom-10 -right-3 text-[11rem] font-extralight text-white/[0.035] leading-none pointer-events-none select-none">&rarr;</div><div class="relative"><div class="text-[10px] font-mono tracking-[0.25em] uppercase text-neutral-400 mb-6">THE POINT</div><h3 class="text-2xl sm:text-3xl font-light text-white mb-4">Trade the survivor.</h3><p class="text-sm text-neutral-500 font-light leading-relaxed max-w-sm">Not the top row of your sweep &mdash; the row that survives the search. That one distinction is the line between a hobby and an edge.</p></div></div>
+            </div>
+        </div>
+    </section>
+    <!-- MARQUEE -->
+    <section class="py-7 border-y border-neutral-950 bg-black overflow-hidden">
+        <div class="mq-wrap relative">
+            <div class="mq text-[11px] font-mono tracking-[0.25em] uppercase text-neutral-600">
+                <span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>CSV</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>TSV</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>JSON</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>EXCEL</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>MT4 / MT5</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>TRADINGVIEW</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>INTERACTIVE BROKERS</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>BINANCE</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>COINBASE</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>DYDX</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>ALPACA</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>ANY COLUMN ORDER</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>CSV</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>TSV</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>JSON</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>EXCEL</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>MT4 / MT5</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>TRADINGVIEW</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>INTERACTIVE BROKERS</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>BINANCE</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>COINBASE</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>DYDX</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>ALPACA</span><span class="flex items-center gap-2.5"><span class="h-1 w-1 rounded-full bg-neutral-700"></span>ANY COLUMN ORDER</span>
+            </div>
+            <div class="pointer-events-none absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-black to-transparent z-10"></div>
+            <div class="pointer-events-none absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-black to-transparent z-10"></div>
+        </div>
+    </section>
+    <!-- EXAMPLE OUTPUT -->
+    <section class="py-28 px-4 bg-black border-t border-neutral-950">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12" data-reveal>
+                <h2 class="text-xs uppercase tracking-[0.25em] text-neutral-400 font-medium mb-3">WHAT YOU&rsquo;LL SEE</h2>
+                <p class="text-3xl sm:text-4xl font-light text-white tracking-tight">A backtest that looks <span class="font-serif italic text-neutral-400">unbeatable.</span></p>
+                <p class="max-w-lg mx-auto text-xs text-neutral-500 font-light leading-relaxed mt-4">A real 20,000-config sweep. The top config shows 99% confidence &mdash; until you correct for the search.</p>
+            </div>
+            <div data-reveal class="rounded-2xl border border-neutral-950 bg-[#050505] p-6 sm:p-8">
+                <div class="rounded-lg border border-neutral-900 border-l-2 border-l-neutral-600 bg-black/40 px-6 py-5 mb-6">
+                    <div class="text-[9px] font-mono tracking-[0.25em] uppercase text-neutral-500">Verdict &middot; example</div>
+                    <div class="text-2xl sm:text-3xl font-light text-white tracking-tight mt-1">LIKELY OVERFIT / DEAD AFTER COSTS</div>
+                </div>
+                <div class="rounded-lg border border-neutral-900 bg-black/40 px-6 py-6">
+                    <div class="text-xs uppercase tracking-[0.2em] text-neutral-400 font-medium mb-1">The honesty gap</div>
+                    <div class="text-[10px] font-mono text-neutral-600 mb-6">What a backtest leaderboard shows you, versus what is true after the search.</div>
+                    <div class="mb-5">
+                        <div class="flex justify-between text-[9px] font-mono uppercase tracking-[0.2em] mb-2"><span class="text-neutral-400">Naive confidence &mdash; what you would see</span><span class="text-white text-sm count" data-count="99.2" data-suffix="%">0%</span></div>
+                        <div class="h-3 bg-black border border-neutral-900 rounded overflow-hidden"><div class="h-full bg-white reveal-bar" data-w="99.2"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-[9px] font-mono uppercase tracking-[0.2em] mb-2"><span class="text-neutral-400">Survives the search &mdash; what is real</span><span class="text-white text-sm count" data-count="0.0" data-suffix="%">0%</span></div>
+                        <div class="h-3 bg-black border border-neutral-900 rounded overflow-hidden"><div class="h-full bg-neutral-600 reveal-bar" data-w="0.8"></div></div>
+                    </div>
+                    <div class="text-[10px] font-mono text-neutral-500 mt-5 leading-relaxed">That is a <span class="text-white">99-point</span> gap between how good this looks and how real it is. <span class="text-neutral-400">Drop your own file at the top to see yours.</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- STICKY STACKING PRINCIPLES -->
+    <section class="relative py-28 px-4 bg-black border-t border-neutral-950">
+        <div class="max-w-3xl mx-auto">
+            <div class="text-center mb-16" data-reveal>
+                <h2 class="text-xs uppercase tracking-[0.25em] text-neutral-400 font-medium mb-3">HOW WE THINK</h2>
+                <p class="text-4xl sm:text-5xl font-light text-white tracking-tight">Four principles of <span class="font-serif italic text-neutral-400">honest validation.</span></p>
+            </div>
+            <div class="relative">
+                <div class="sticky" style="top:16vh"><div class="rounded-3xl border border-neutral-800 bg-gradient-to-br from-neutral-900/80 to-[#070708] p-8 sm:p-10 mb-6 shadow-2xl shadow-black/60"><div class="flex items-baseline gap-4 mb-4"><span class="text-4xl font-extralight text-neutral-600">01</span><h3 class="text-xl sm:text-2xl font-light text-white">Guilty until proven</h3></div><p class="text-sm text-neutral-500 font-light leading-relaxed">Every apparent edge is assumed false until it survives the full gauntlet. The burden of proof sits on the strategy, never on the doubt.</p></div></div>
+                <div class="sticky" style="top:19vh"><div class="rounded-3xl border border-neutral-800 bg-gradient-to-br from-neutral-900/80 to-[#070708] p-8 sm:p-10 mb-6 shadow-2xl shadow-black/60"><div class="flex items-baseline gap-4 mb-4"><span class="text-4xl font-extralight text-neutral-600">02</span><h3 class="text-xl sm:text-2xl font-light text-white">Correct for the search</h3></div><p class="text-sm text-neutral-500 font-light leading-relaxed">The luckiest of ten thousand configs is expected to look brilliant by pure chance. We deflate the result by how hard you searched.</p></div></div>
+                <div class="sticky" style="top:22vh"><div class="rounded-3xl border border-neutral-800 bg-gradient-to-br from-neutral-900/80 to-[#070708] p-8 sm:p-10 mb-6 shadow-2xl shadow-black/60"><div class="flex items-baseline gap-4 mb-4"><span class="text-4xl font-extralight text-neutral-600">03</span><h3 class="text-xl sm:text-2xl font-light text-white">Costs are not a footnote</h3></div><p class="text-sm text-neutral-500 font-light leading-relaxed">Spread and fees quietly decide more strategies than signals do. Every edge is re-priced at your real cost before it earns a verdict.</p></div></div>
+                <div class="sticky" style="top:25vh"><div class="rounded-3xl border border-neutral-800 bg-gradient-to-br from-neutral-900/80 to-[#070708] p-8 sm:p-10 mb-6 shadow-2xl shadow-black/60"><div class="flex items-baseline gap-4 mb-4"><span class="text-4xl font-extralight text-neutral-600">04</span><h3 class="text-xl sm:text-2xl font-light text-white">Performance over source</h3></div><p class="text-sm text-neutral-500 font-light leading-relaxed">Validity lives in how a strategy behaved on data &mdash; never in how elegant its code reads. We judge the trades, not the prose.</p></div></div>
+            </div>
+            <div class="h-[20vh]"></div>
+        </div>
+    </section>
+    <!-- CHECKS -->
+    <section id="checks" class="py-28 px-4 relative bg-black border-t border-neutral-950 overflow-hidden">
+        <div class="absolute top-32 left-1/2 -translate-x-1/2 w-[680px] h-[340px] bg-white/[0.025] blur-[130px] rounded-full pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto relative">
+            <div class="text-center max-w-2xl mx-auto mb-16" data-reveal>
+                <h2 class="text-xs uppercase tracking-[0.25em] text-neutral-400 font-medium mb-3">WHAT IT CHECKS</h2>
+                <p class="text-4xl sm:text-5xl font-light text-white tracking-tight mb-4">Six ways a backtest <span class="font-serif italic text-neutral-400">fools you.</span></p>
+                <p class="text-xs text-neutral-500 font-light leading-relaxed">Each strategy is run through the same gauntlet a serious quant desk would apply &mdash; and most apparent edges do not survive it.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 stagger">
+                <div data-reveal class="lift group relative p-8 rounded-2xl border border-neutral-900 bg-gradient-to-b from-neutral-900/50 to-[#060606] overflow-hidden"><div class="absolute -top-4 right-1 text-8xl font-extralight text-white/[0.035] select-none pointer-events-none leading-none">01</div><div class="absolute top-0 left-0 h-px w-10 bg-gradient-to-r from-white/70 to-transparent group-hover:w-full transition-all duration-500"></div><div class="relative w-12 h-12 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center mb-6 group-hover:border-white/30 group-hover:bg-white/[0.09] transition-all duration-300"><i data-lucide="search-x" class="w-5 h-5 text-white"></i></div><h3 class="relative text-base font-medium text-white mb-2">Overfitting (Deflated Sharpe)</h3><p class="relative text-xs text-neutral-500 leading-relaxed font-light">Corrects the apparent edge for how many configs you searched. The single biggest reason a backtest winner dies live.</p></div>
+                <div data-reveal class="lift group relative p-8 rounded-2xl border border-neutral-900 bg-gradient-to-b from-neutral-900/50 to-[#060606] overflow-hidden"><div class="absolute -top-4 right-1 text-8xl font-extralight text-white/[0.035] select-none pointer-events-none leading-none">02</div><div class="absolute top-0 left-0 h-px w-10 bg-gradient-to-r from-white/70 to-transparent group-hover:w-full transition-all duration-500"></div><div class="relative w-12 h-12 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center mb-6 group-hover:border-white/30 group-hover:bg-white/[0.09] transition-all duration-300"><i data-lucide="dices" class="w-5 h-5 text-white"></i></div><h3 class="relative text-base font-medium text-white mb-2">Sample size</h3><p class="relative text-xs text-neutral-500 leading-relaxed font-light">A great result on a handful of trades is noise wearing a costume. We put a confidence interval on the per-trade edge.</p></div>
+                <div data-reveal class="lift group relative p-8 rounded-2xl border border-neutral-900 bg-gradient-to-b from-neutral-900/50 to-[#060606] overflow-hidden"><div class="absolute -top-4 right-1 text-8xl font-extralight text-white/[0.035] select-none pointer-events-none leading-none">03</div><div class="absolute top-0 left-0 h-px w-10 bg-gradient-to-r from-white/70 to-transparent group-hover:w-full transition-all duration-500"></div><div class="relative w-12 h-12 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center mb-6 group-hover:border-white/30 group-hover:bg-white/[0.09] transition-all duration-300"><i data-lucide="receipt" class="w-5 h-5 text-white"></i></div><h3 class="relative text-base font-medium text-white mb-2">Cost survival</h3><p class="relative text-xs text-neutral-500 leading-relaxed font-light">Spread and fees quietly eat thin edges. We compute the break-even fee and the net edge at your real cost.</p></div>
+                <div data-reveal class="lift group relative p-8 rounded-2xl border border-neutral-900 bg-gradient-to-b from-neutral-900/50 to-[#060606] overflow-hidden"><div class="absolute -top-4 right-1 text-8xl font-extralight text-white/[0.035] select-none pointer-events-none leading-none">04</div><div class="absolute top-0 left-0 h-px w-10 bg-gradient-to-r from-white/70 to-transparent group-hover:w-full transition-all duration-500"></div><div class="relative w-12 h-12 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center mb-6 group-hover:border-white/30 group-hover:bg-white/[0.09] transition-all duration-300"><i data-lucide="git-branch" class="w-5 h-5 text-white"></i></div><h3 class="relative text-base font-medium text-white mb-2">Regime robustness</h3><p class="relative text-xs text-neutral-500 leading-relaxed font-light">An edge that only works in a trending market is fragile. Split across up, down, and chop windows. (Needs per-trade timestamps.)</p></div>
+                <div data-reveal class="lift group relative p-8 rounded-2xl border border-neutral-900 bg-gradient-to-b from-neutral-900/50 to-[#060606] overflow-hidden"><div class="absolute -top-4 right-1 text-8xl font-extralight text-white/[0.035] select-none pointer-events-none leading-none">05</div><div class="absolute top-0 left-0 h-px w-10 bg-gradient-to-r from-white/70 to-transparent group-hover:w-full transition-all duration-500"></div><div class="relative w-12 h-12 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center mb-6 group-hover:border-white/30 group-hover:bg-white/[0.09] transition-all duration-300"><i data-lucide="eye-off" class="w-5 h-5 text-white"></i></div><h3 class="relative text-base font-medium text-white mb-2">Look-ahead / leakage</h3><p class="relative text-xs text-neutral-500 leading-relaxed font-light">Strategies that secretly use future data look perfect and are worthless. Flagged from the trade structure.</p></div>
+                <div data-reveal class="lift group relative p-8 rounded-2xl border border-neutral-900 bg-gradient-to-b from-neutral-900/50 to-[#060606] overflow-hidden"><div class="absolute -top-4 right-1 text-8xl font-extralight text-white/[0.035] select-none pointer-events-none leading-none">06</div><div class="absolute top-0 left-0 h-px w-10 bg-gradient-to-r from-white/70 to-transparent group-hover:w-full transition-all duration-500"></div><div class="relative w-12 h-12 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center mb-6 group-hover:border-white/30 group-hover:bg-white/[0.09] transition-all duration-300"><i data-lucide="lock" class="w-5 h-5 text-white"></i></div><h3 class="relative text-base font-medium text-white mb-2">Locked holdout</h3><p class="relative text-xs text-neutral-500 leading-relaxed font-light">The cleanest test: measure the edge only on data that played no part in choosing the strategy.</p></div>
+            </div>
+        </div>
+    </section>
+    <!-- METHOD -->
+    <section id="method" class="py-24 px-4 bg-black border-t border-neutral-950">
+        <div class="max-w-7xl mx-auto reveal">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                <div class="lg:col-span-5 lg:sticky lg:top-32 h-fit" data-reveal>
+                    <h2 class="text-xs uppercase tracking-[0.25em] text-neutral-400 font-medium mb-3">THE GAUNTLET</h2>
+                    <p class="text-4xl sm:text-5xl font-light text-white tracking-tight mb-6">How a strategy <span class="font-serif italic text-neutral-400">earns trust.</span></p>
+                    <p class="text-xs text-neutral-500 font-light leading-relaxed mb-8">An edge is presumed false until it survives every stage. Most are eliminated at stage one.</p>
+                    <div class="lift relative rounded-2xl border border-neutral-800 bg-gradient-to-br from-neutral-900/60 to-[#060606] p-5 flex items-center gap-4 overflow-hidden">
+                        <div class="w-10 h-10 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center flex-none"><i data-lucide="shield-check" class="w-5 h-5 text-white"></i></div>
+                        <div class="text-[10px] font-mono"><div class="font-semibold text-white tracking-wider">DEFAULT // GUILTY</div><div class="text-neutral-500 mt-1">Burden of proof is on the strategy.</div></div>
+                    </div>
+                </div>
+                <div class="lg:col-span-7 relative">
+                    <div id="gauntlet-rail" class="absolute left-[19px] top-4 bottom-6 w-px bg-neutral-800/70 overflow-hidden"><div id="gauntlet-fill"></div></div>
+                    <div class="space-y-4">
+                        <div data-reveal class="relative pl-14"><div class="gnode absolute left-0 top-1 w-10 h-10 rounded-full bg-black border border-white/20 flex items-center justify-center text-white font-mono text-[11px] z-10">01</div><div class="lift rounded-2xl border border-neutral-900 bg-gradient-to-br from-neutral-900/45 to-[#060606] p-6"><span class="text-[9px] font-mono tracking-[0.2em] uppercase text-neutral-600">Stage 01</span><h3 class="text-base font-light text-white mt-1 mb-2">Leakage audit</h3><p class="text-xs text-neutral-500 leading-relaxed font-light">Confirm the strategy never touched information it could not have had at decision time. Future data is the most common silent killer.</p></div></div>
+                        <div data-reveal class="relative pl-14"><div class="gnode absolute left-0 top-1 w-10 h-10 rounded-full bg-black border border-white/20 flex items-center justify-center text-white font-mono text-[11px] z-10">02</div><div class="lift rounded-2xl border border-neutral-900 bg-gradient-to-br from-neutral-900/45 to-[#060606] p-6"><span class="text-[9px] font-mono tracking-[0.2em] uppercase text-neutral-600">Stage 02</span><h3 class="text-base font-light text-white mt-1 mb-2">Cost &amp; capacity stress</h3><p class="text-xs text-neutral-500 leading-relaxed font-light">Re-price every trade with realistic spread and fees. Edges that need free execution are removed here.</p></div></div>
+                        <div data-reveal class="relative pl-14"><div class="gnode absolute left-0 top-1 w-10 h-10 rounded-full bg-black border border-white/20 flex items-center justify-center text-white font-mono text-[11px] z-10">03</div><div class="lift rounded-2xl border border-neutral-900 bg-gradient-to-br from-neutral-900/45 to-[#060606] p-6"><span class="text-[9px] font-mono tracking-[0.2em] uppercase text-neutral-600">Stage 03</span><h3 class="text-base font-light text-white mt-1 mb-2">Purged cross-validation</h3><p class="text-xs text-neutral-500 leading-relaxed font-light">Test on time-separated folds so overlapping trades cannot leak between training and testing.</p></div></div>
+                        <div data-reveal class="relative pl-14"><div class="gnode absolute left-0 top-1 w-10 h-10 rounded-full bg-black border border-white/20 flex items-center justify-center text-white font-mono text-[11px] z-10">04</div><div class="lift rounded-2xl border border-neutral-900 bg-gradient-to-br from-neutral-900/45 to-[#060606] p-6"><span class="text-[9px] font-mono tracking-[0.2em] uppercase text-neutral-600">Stage 04</span><h3 class="text-base font-light text-white mt-1 mb-2">Deflated Sharpe haircut</h3><p class="text-xs text-neutral-500 leading-relaxed font-light">Discount the result by the number of configurations searched. The luckiest of thousands is expected to look brilliant.</p></div></div>
+                        <div data-reveal class="relative pl-14"><div class="gnode absolute left-0 top-1 w-10 h-10 rounded-full bg-black border border-white/20 flex items-center justify-center text-white font-mono text-[11px] z-10">05</div><div class="lift rounded-2xl border border-neutral-900 bg-gradient-to-br from-neutral-900/45 to-[#060606] p-6"><span class="text-[9px] font-mono tracking-[0.2em] uppercase text-neutral-600">Stage 05</span><h3 class="text-base font-light text-white mt-1 mb-2">Placebo / falsification</h3><p class="text-xs text-neutral-500 leading-relaxed font-light">Run the same logic on shuffled or random data. A real edge disappears; an artifact persists.</p></div></div>
+                        <div data-reveal class="relative pl-14"><div class="gnode absolute left-0 top-1 w-10 h-10 rounded-full bg-black border border-white/20 flex items-center justify-center text-white font-mono text-[11px] z-10">06</div><div class="lift rounded-2xl border border-neutral-900 bg-gradient-to-br from-neutral-900/45 to-[#060606] p-6"><span class="text-[9px] font-mono tracking-[0.2em] uppercase text-neutral-600">Stage 06</span><h3 class="text-base font-light text-white mt-1 mb-2">Locked holdout</h3><p class="text-xs text-neutral-500 leading-relaxed font-light">A final verdict on data sealed away from the entire selection process. Survive this and the edge is credible.</p></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- HORIZONTAL PRODUCT SHOWCASE -->
+    <section id="hgal2" class="hsec relative bg-black border-t border-neutral-950" style="height:330vh;">
+        <div class="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
+            <div class="px-[8vw] mb-10" data-reveal>
+                <h2 class="text-xs uppercase tracking-[0.25em] text-neutral-400 font-medium mb-3">WHAT COMES BACK</h2>
+                <p class="text-4xl sm:text-6xl font-light text-white tracking-tight">See what&rsquo;s <span class="font-serif italic text-neutral-400">real</span> &mdash; in seconds.</p>
+            </div>
+            <div class="htrack flex gap-6 px-[8vw]" style="will-change:transform">
+                <div class="upanel flex-none w-[84vw] sm:w-[56vw] lg:w-[40vw] rounded-2xl border border-neutral-800 bg-gradient-to-br from-neutral-900/70 to-[#070708] overflow-hidden flex flex-col min-h-[52vh] shadow-2xl shadow-black/50"><div class="flex items-center gap-1.5 px-5 py-3 border-b border-neutral-900"><span class="w-2.5 h-2.5 rounded-full bg-neutral-700"></span><span class="w-2.5 h-2.5 rounded-full bg-neutral-800"></span><span class="w-2.5 h-2.5 rounded-full bg-neutral-800"></span><span class="ml-3 text-[9px] font-mono tracking-[0.2em] uppercase text-neutral-600">monrch / verdict.txt</span></div><div class="p-7 sm:p-9 flex-1 flex flex-col justify-center"><div class="text-[10px] font-mono tracking-[0.25em] uppercase text-neutral-500 mb-3">Verdict &middot; strategy #5276</div><div class="text-4xl sm:text-5xl font-light text-white tracking-tight mb-5">Likely Overfit</div><div class="inline-flex items-center gap-2 text-[11px] font-mono text-neutral-400 mb-6"><span class="w-1.5 h-1.5 rounded-full bg-white"></span>The top row of your sweep, exposed</div><p class="text-sm text-neutral-500 font-light leading-relaxed max-w-sm">It topped the leaderboard at 99.2% apparent confidence. After correcting for the search, its real edge rounds to zero.</p></div></div>
+                <div class="upanel flex-none w-[84vw] sm:w-[56vw] lg:w-[40vw] rounded-2xl border border-neutral-800 bg-gradient-to-br from-neutral-900/70 to-[#070708] overflow-hidden flex flex-col min-h-[52vh] shadow-2xl shadow-black/50"><div class="flex items-center gap-1.5 px-5 py-3 border-b border-neutral-900"><span class="w-2.5 h-2.5 rounded-full bg-neutral-700"></span><span class="w-2.5 h-2.5 rounded-full bg-neutral-800"></span><span class="w-2.5 h-2.5 rounded-full bg-neutral-800"></span><span class="ml-3 text-[9px] font-mono tracking-[0.2em] uppercase text-neutral-600">honesty_gap</span></div><div class="p-7 sm:p-9 flex-1 flex flex-col justify-center"><div class="text-[10px] font-mono tracking-[0.25em] uppercase text-neutral-500 mb-7">The honesty gap</div><div class="mb-6"><div class="flex justify-between text-[9px] font-mono uppercase tracking-[0.2em] mb-2"><span class="text-neutral-400">Naive confidence</span><span class="text-white text-sm">99.2%</span></div><div class="h-3 bg-black border border-neutral-900 rounded overflow-hidden"><div class="h-full bg-white" style="width:99.2%"></div></div></div><div class="mb-7"><div class="flex justify-between text-[9px] font-mono uppercase tracking-[0.2em] mb-2"><span class="text-neutral-400">Survives the search</span><span class="text-white text-sm">0.0%</span></div><div class="h-3 bg-black border border-neutral-900 rounded overflow-hidden"><div class="h-full bg-neutral-500" style="width:0.8%"></div></div></div><p class="text-sm text-neutral-500 font-light leading-relaxed">Same strategy. Two very different truths.</p></div></div>
+                <div class="upanel flex-none w-[84vw] sm:w-[56vw] lg:w-[40vw] rounded-2xl border border-neutral-800 bg-gradient-to-br from-neutral-900/70 to-[#070708] overflow-hidden flex flex-col min-h-[52vh] shadow-2xl shadow-black/50"><div class="flex items-center gap-1.5 px-5 py-3 border-b border-neutral-900"><span class="w-2.5 h-2.5 rounded-full bg-neutral-700"></span><span class="w-2.5 h-2.5 rounded-full bg-neutral-800"></span><span class="w-2.5 h-2.5 rounded-full bg-neutral-800"></span><span class="ml-3 text-[9px] font-mono tracking-[0.2em] uppercase text-neutral-600">deflated_sharpe</span></div><div class="p-7 sm:p-9 flex-1 flex flex-col justify-center"><div class="text-[10px] font-mono tracking-[0.25em] uppercase text-neutral-500 mb-4">Deflated Sharpe probability</div><div class="text-7xl sm:text-8xl font-extralight text-white leading-none mb-5">0.0%</div><p class="text-sm text-neutral-500 font-light leading-relaxed max-w-sm">Corrected for 20,000 configurations searched, the spread of results, and 17,340 scorable trades. The probability the edge is real, not luck.</p><div class="text-[11px] font-mono text-neutral-600 mt-6">naive read: <span class="text-neutral-400">99.2%</span> &rarr; honest read: <span class="text-white">0.0%</span></div></div></div>
+                <div class="upanel flex-none w-[84vw] sm:w-[56vw] lg:w-[40vw] rounded-2xl border border-neutral-800 bg-gradient-to-br from-neutral-900/70 to-[#070708] overflow-hidden flex flex-col min-h-[52vh] shadow-2xl shadow-black/50"><div class="flex items-center gap-1.5 px-5 py-3 border-b border-neutral-900"><span class="w-2.5 h-2.5 rounded-full bg-neutral-700"></span><span class="w-2.5 h-2.5 rounded-full bg-neutral-800"></span><span class="w-2.5 h-2.5 rounded-full bg-neutral-800"></span><span class="ml-3 text-[9px] font-mono tracking-[0.2em] uppercase text-neutral-600">sweep_scan</span></div><div class="p-7 sm:p-9 flex-1 flex flex-col justify-center"><div class="text-[10px] font-mono tracking-[0.25em] uppercase text-neutral-500 mb-5">Every config, re-judged</div><table class="w-full text-[11px] font-mono mb-6"><thead><tr class="text-neutral-600 border-b border-neutral-800"><th class="text-left py-2 pr-2 font-normal">ID</th><th class="text-right py-2 px-2 font-normal">NAIVE%</th><th class="text-right py-2 px-2 font-normal">DSR%</th><th class="text-right py-2 pl-2 font-normal">VERDICT</th></tr></thead><tbody><tr class="border-b border-neutral-900/60"><td class="py-2.5 pr-2 text-white">5276</td><td class="py-2.5 px-2 text-right text-neutral-400">99.2</td><td class="py-2.5 px-2 text-right text-neutral-400">0.0</td><td class="py-2.5 pl-2 text-right text-white">OVERFIT</td></tr><tr class="border-b border-neutral-900/40 text-neutral-700"><td class="py-2.5 pr-2">&middot;&middot;&middot;&middot;</td><td class="py-2.5 px-2 text-right">&middot;&middot;</td><td class="py-2.5 px-2 text-right">&middot;&middot;</td><td class="py-2.5 pl-2 text-right">&middot;&middot;&middot;</td></tr><tr class="border-b border-neutral-900/40 text-neutral-700"><td class="py-2.5 pr-2">&middot;&middot;&middot;&middot;</td><td class="py-2.5 px-2 text-right">&middot;&middot;</td><td class="py-2.5 px-2 text-right">&middot;&middot;</td><td class="py-2.5 pl-2 text-right">&middot;&middot;&middot;</td></tr><tr class="text-neutral-700"><td class="py-2.5 pr-2">&middot;&middot;&middot;&middot;</td><td class="py-2.5 px-2 text-right">&middot;&middot;</td><td class="py-2.5 px-2 text-right">&middot;&middot;</td><td class="py-2.5 pl-2 text-right">&middot;&middot;&middot;</td></tr></tbody></table><p class="text-sm text-neutral-500 font-light leading-relaxed">We don&rsquo;t just grade the winner. The whole sweep gets re-judged against the search.</p></div></div>
+            </div>
+        </div>
+    </section>
+    <!-- WHY -->
+    <section id="why" class="py-24 px-4 bg-black border-t border-neutral-950">
+        <div class="max-w-4xl mx-auto reveal text-center">
+            <h2 class="text-xs uppercase tracking-[0.25em] text-neutral-400 font-medium mb-3">WHY THIS EXISTS</h2>
+            <p class="text-2xl sm:text-3xl font-light text-white tracking-tight mb-6">
+                The graveyard is full of <span class="font-serif italic text-neutral-400">beautiful backtests.</span>
+            </p>
+            <p class="text-sm text-neutral-500 font-light leading-relaxed max-w-2xl mx-auto mb-10">
+                The best-funded crowd-sourced trading platform ever built shut down after concluding its users could not
+                reliably find real edges &mdash; not for lack of effort, but because searching enough strategies guarantees that
+                some look like gold by pure chance, then fail on live money. That failure mode has a name, a formula, and a fix.
+                Monrch applies the fix before you risk a dollar.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-left stagger">
+                <div data-reveal class="lift p-6 rounded-xl border border-neutral-950 bg-[#050505]">
+                    <div class="text-2xl font-mono font-light text-white mb-1 count" data-count="20000" data-comma="1">0</div>
+                    <div class="text-[9px] font-mono tracking-widest uppercase text-neutral-500">configs in a typical sweep</div>
+                </div>
+                <div data-reveal class="lift p-6 rounded-xl border border-neutral-950 bg-[#050505]">
+                    <div class="text-2xl font-mono font-light text-white mb-1"><span class="count" data-count="99.2" data-suffix="%">0%</span></div>
+                    <div class="text-[9px] font-mono tracking-widest uppercase text-neutral-500">naive confidence of the "winner"</div>
+                </div>
+                <div data-reveal class="lift p-6 rounded-xl border border-neutral-950 bg-[#050505]">
+                    <div class="text-2xl font-mono font-light text-white mb-1"><span class="count" data-count="0.0" data-suffix="%">0%</span></div>
+                    <div class="text-[9px] font-mono tracking-widest uppercase text-neutral-500">survival after the search</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- STATEMENT WORD REVEAL -->
+    <section id="statement" class="relative py-40 px-4 bg-black border-t border-neutral-950">
+        <div class="max-w-4xl mx-auto">
+            <p class="text-3xl sm:text-5xl font-light leading-snug tracking-tight"><span class="sw">A</span> <span class="sw">beautiful</span> <span class="sw">backtest</span> <span class="sw">is</span> <span class="sw">a</span> <span class="sw">hypothesis,</span> <span class="sw">not</span> <span class="sw">a</span> <span class="sw">fact.</span> <span class="sw">Monrch</span> <span class="sw">is</span> <span class="sw">where</span> <span class="sw">that</span> <span class="sw">hypothesis</span> <span class="sw">goes</span> <span class="sw">to</span> <span class="sw">be</span> <span class="sw">proven</span> <span class="sw">—</span> <span class="sw">or</span> <span class="sw">buried.</span></p>
+        </div>
+    </section>
+    <!-- PRICING -->
+    <section id="pricing" class="py-28 px-6 sm:px-10 bg-black border-t border-neutral-950">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+                <!-- LEFT: pricing card -->
+                <div data-reveal="left" class="w-full max-w-xl lg:justify-self-start">
+                    <div class="lift relative rounded-3xl border border-neutral-800 bg-[#070708] p-10 sm:p-12 overflow-hidden">
+                        <div class="absolute top-0 right-0 px-4 py-1.5 bg-white text-black text-[9px] font-mono tracking-[0.2em] uppercase rounded-bl-xl">Free in early access</div>
+                        <div class="text-[11px] font-mono tracking-[0.25em] uppercase text-neutral-500 mb-5">Validator &mdash; Pro</div>
+                        <div class="flex items-end gap-2.5 mb-2">
+                            <span class="text-6xl font-extralight text-neutral-600 line-through decoration-neutral-700 decoration-1">$100</span>
+                            <span class="text-6xl font-extralight text-white">$0</span>
+                            <span class="text-neutral-500 font-mono text-sm mb-1.5">/mo</span>
+                        </div>
+                        <p class="text-sm text-neutral-500 font-light leading-relaxed mb-8">We&rsquo;re not charging while in early access. Use the full validator free &mdash; unlimited files, every check.</p>
+                        <div class="space-y-3.5 mb-10">
+                            <div class="flex items-center gap-3 text-sm text-neutral-300 font-light"><i data-lucide="check" class="w-4 h-4 text-white flex-none"></i><span>Unlimited strategy validations</span></div>
+                        <div class="flex items-center gap-3 text-sm text-neutral-300 font-light"><i data-lucide="check" class="w-4 h-4 text-white flex-none"></i><span>Deflated Sharpe overfitting check</span></div>
+                        <div class="flex items-center gap-3 text-sm text-neutral-300 font-light"><i data-lucide="check" class="w-4 h-4 text-white flex-none"></i><span>Cost &amp; sample-size analysis</span></div>
+                        <div class="flex items-center gap-3 text-sm text-neutral-300 font-light"><i data-lucide="check" class="w-4 h-4 text-white flex-none"></i><span>Any file format, any broker</span></div>
+                        <div class="flex items-center gap-3 text-sm text-neutral-300 font-light"><i data-lucide="check" class="w-4 h-4 text-white flex-none"></i><span>Runs locally &mdash; your data stays private</span></div>
+                        </div>
+                        <button onclick="smoothTo('access')" class="w-full py-4 rounded-full bg-white text-black text-[11px] font-mono tracking-[0.2em] uppercase hover:bg-neutral-200 transition-colors">Get access free</button>
+                    </div>
+                </div>
+                <!-- RIGHT: free-standing text, runs to the page edge -->
+                <div data-reveal="right">
+                    <div class="text-[10px] font-mono tracking-[0.25em] uppercase text-neutral-500 mb-5">Pricing</div>
+                    <h2 class="text-4xl sm:text-5xl font-light text-white tracking-tight leading-[1.1] mb-3">Simple, honest pricing.</h2>
+                    <div class="text-2xl sm:text-3xl font-serif italic font-light text-neutral-400 tracking-tight mb-8">Free while it earns your&nbsp;trust.</div>
+                    <p class="text-base text-neutral-400 font-light leading-relaxed mb-9">A validator is only worth paying for once it has saved you from a bad trade. So run every check, on every file, as often as you like &mdash; and when pricing turns on, you&rsquo;ll see it coming. Early users keep founder&nbsp;terms.</p>
+                    <div class="space-y-5 mb-9">
+                        <div class="flex items-start gap-3.5"><i data-lucide="zap" class="w-4 h-4 text-white flex-none mt-1"></i><div><div class="text-sm text-white font-light">No card, no signup</div><div class="text-xs text-neutral-500 font-light">Just drop a file and read the verdict.</div></div></div>
+                        <div class="flex items-start gap-3.5"><i data-lucide="lock" class="w-4 h-4 text-white flex-none mt-1"></i><div><div class="text-sm text-white font-light">Your data stays private</div><div class="text-xs text-neutral-500 font-light">Everything runs in your browser &mdash; nothing is uploaded.</div></div></div>
+                        <div class="flex items-start gap-3.5"><i data-lucide="crown" class="w-4 h-4 text-white flex-none mt-1"></i><div><div class="text-sm text-white font-light">Founder pricing, locked</div><div class="text-xs text-neutral-500 font-light">Early users keep the lowest rate we ever offer.</div></div></div>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-2 text-[10px] font-mono tracking-[0.2em] uppercase text-neutral-600 border-t border-neutral-900 pt-6">
+                        <span class="text-neutral-300">Today &middot; Validator</span><span class="text-neutral-800">&rarr;</span><span>Next &middot; Marketplace</span><span class="text-neutral-800">&rarr;</span><span>Then &middot; Fund</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ACCESS -->
+    <section id="access" class="relative py-32 px-4 overflow-hidden bg-[#050505] text-center border-t border-neutral-950">
+        <div class="absolute inset-0 grid-overlay opacity-[0.2] pointer-events-none"></div>
+        <div class="relative z-10 max-w-4xl mx-auto reveal">
+            <h2 class="text-xs uppercase tracking-[0.3em] text-neutral-400 font-medium mb-4">EARLY ACCESS</h2>
+            <h3 class="text-3xl sm:text-4xl font-light tracking-tight text-white mb-6">Validate every strategy before it costs you.</h3>
+            <p class="text-xs text-neutral-500 font-light max-w-md mx-auto leading-relaxed mb-10">
+                The validator is free to try right now &mdash; just hit Begin. Leave an email for live-strategy monitoring, regime &amp; holdout testing, and the API.
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
+                <input id="ea-email" type="email" placeholder="you@example.com" class="w-full px-5 py-4 rounded-full text-xs font-mono bg-black border border-neutral-900 text-white focus:outline-none focus:border-white transition-colors duration-200" />
+                <button id="ea-go" class="w-full sm:w-auto px-6 py-4 rounded-full text-[9px] font-mono tracking-widest uppercase text-black bg-white hover:bg-neutral-200 transition-colors duration-200 whitespace-nowrap">Request access</button>
+            </div>
+            <div id="ea-msg" class="text-[10px] font-mono mt-4 min-h-[14px] text-neutral-500"></div>
+            <div class="mt-6 flex items-center justify-center gap-2 text-[9px] text-neutral-500 font-mono">
+                <i data-lucide="lock" class="w-3.5 h-3.5 text-white"></i><span>Your files are parsed in your browser and never uploaded.</span>
+            </div>
+        </div>
+    </section>
+    <!-- FOOTER -->
+    <footer class="py-12 px-8 bg-black border-t border-neutral-950">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-[9px] font-mono text-neutral-500">
+            <div class="flex items-center gap-3">
+                <div class="w-5 h-5 rounded bg-white flex items-center justify-center font-bold text-[9px] text-black">M</div>
+                <span class="tracking-wider text-neutral-400">MONRCH &copy; 2026</span>
+            </div>
+            <div class="flex gap-8">
+                <a href="#" onclick="openChooser();return false;" class="hover:text-white transition-colors duration-150">Validator</a>
+                <a href="#method" class="hover:text-white transition-colors duration-150">Method</a>
+                <a href="#access" class="hover:text-white transition-colors duration-150">Access</a>
+                <a href="mailto:harshith.unique@gmail.com" class="hover:text-white transition-colors duration-150">Contact</a>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-8 pt-6 border-t border-neutral-950">
+            <p class="text-[10px] leading-relaxed text-neutral-600 max-w-4xl">
+                <span class="text-neutral-400">Analytics, not financial advice.</span> Monrch is a statistical analysis tool. It evaluates the historical, statistical properties of trade data and strategy descriptions you provide &mdash; it does not provide investment, trading, financial, legal, or tax advice, and nothing here is a recommendation to buy, sell, or hold any security or instrument, or to pursue any strategy. Verdicts and guidance reflect only the data supplied and the methods described; they are not predictions of future performance. Past results and backtested figures do not guarantee future returns, and all trading involves risk of loss. You are solely responsible for your own decisions. Monrch makes no warranty as to the accuracy or completeness of any output. Calculations run locally in your browser; uploaded trade data is not transmitted or stored by us.
+            </p>
+            <p class="text-[10px] leading-relaxed text-neutral-700 mt-3">Questions: <a href="mailto:harshith.unique@gmail.com" class="text-neutral-500 hover:text-white transition-colors">harshith.unique@gmail.com</a></p>
+        </div>
+    </footer>
+    <!-- CHOOSER OVERLAY -->
+    <div id="ov-choose" class="overlay" data-lenis-prevent>
+        <div class="orb" style="width:420px;height:420px;background:#16242e;top:-120px;left:-90px;"></div>
+        <div class="orb" style="width:380px;height:380px;background:#241a2e;bottom:-120px;right:-70px;"></div>
+        <div class="min-h-screen flex flex-col items-center justify-center px-4 py-20 relative">
+            <button onclick="closeOverlays()" aria-label="Close" class="absolute top-6 right-6 w-10 h-10 rounded-full border border-neutral-700 text-neutral-400 hover:text-white hover:border-white transition-colors flex items-center justify-center"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <div class="ov-in text-center mb-14">
+                <div class="text-[10px] font-mono tracking-[0.3em] uppercase text-neutral-500 mb-4">Choose your path</div>
+                <h2 class="text-4xl sm:text-6xl font-extralight text-white tracking-tight">How will you <span class="font-serif italic text-neutral-400">prove</span> your edge?</h2>
+            </div>
+            <div class="ov-in grid md:grid-cols-2 gap-6 max-w-4xl w-full">
+                <button onclick="openView('tradelog')" class="group glass-surface rounded-3xl p-9 text-left hover:-translate-y-1.5 transition-transform duration-300">
+                    <div class="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center mb-6 group-hover:bg-white group-hover:text-black transition-colors"><i data-lucide="file-spreadsheet" class="w-5 h-5"></i></div>
+                    <h3 class="text-2xl font-light text-white mb-3">Bring the receipts</h3>
+                    <p class="text-sm text-neutral-400 font-light leading-relaxed mb-6">Upload a real trade log or parameter sweep. Monrch runs the deflated-Sharpe gauntlet on your actual results.</p>
+                    <span class="text-[10px] font-mono tracking-[0.25em] uppercase text-neutral-500 group-hover:text-white transition-colors inline-flex items-center gap-2">Trade-log validation <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></span>
+                </button>
+                <button onclick="openView('english')" class="group glass-surface rounded-3xl p-9 text-left hover:-translate-y-1.5 transition-transform duration-300">
+                    <div class="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center mb-6 group-hover:bg-white group-hover:text-black transition-colors"><i data-lucide="pen-line" class="w-5 h-5"></i></div>
+                    <h3 class="text-2xl font-light text-white mb-3">Describe it in words</h3>
+                    <p class="text-sm text-neutral-400 font-light leading-relaxed mb-6">Type your strategy in plain English. Monrch reviews how validation-ready the idea is and scores it out of 100.</p>
+                    <span class="text-[10px] font-mono tracking-[0.25em] uppercase text-neutral-500 group-hover:text-white transition-colors inline-flex items-center gap-2">Plain-English review <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></span>
+                </button>
+            </div>
+            <p class="ov-in text-[10px] font-mono text-neutral-600 mt-10 max-w-md text-center leading-relaxed">A trade log is evidence; a description is a hypothesis. Data earns a verdict &mdash; words earn a readiness score.</p>
+        </div>
+    </div>
+    <!-- ENGLISH VALIDATOR OVERLAY -->
+    <div id="ov-english" class="overlay" data-lenis-prevent>
+        <div class="orb" style="width:480px;height:480px;background:#16222b;top:-140px;right:-110px;"></div>
+        <div class="fixed top-0 left-0 right-0 z-[85] flex items-center justify-between px-6 py-5">
+            <button onclick="openChooser()" class="text-[10px] font-mono tracking-[0.25em] uppercase text-neutral-500 hover:text-white transition-colors inline-flex items-center gap-2"><i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Back</button>
+            <button onclick="closeOverlays()" class="w-9 h-9 rounded-full border border-neutral-700 text-neutral-400 hover:text-white hover:border-white transition-colors flex items-center justify-center"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
+        <!-- INPUT STAGE -->
+        <div id="se-input-stage" class="min-h-screen flex flex-col items-center justify-center px-4 py-24 relative">
+            <div class="ov-in max-w-2xl w-full">
+                <div class="text-center mb-8">
+                    <div class="text-[10px] font-mono tracking-[0.3em] uppercase text-neutral-500 mb-4">Plain-English Review</div>
+                    <h2 class="text-3xl sm:text-5xl font-extralight text-white tracking-tight">Describe your <span class="font-serif italic text-neutral-400">edge.</span></h2>
+                    <p class="text-sm text-neutral-400 font-light mt-4 max-w-lg mx-auto leading-relaxed">What is the signal, what does it trade, when does it enter and exit, and why should it work? The more specific you are, the sharper the review.</p>
+                </div>
+                <textarea id="se-input" rows="7" placeholder="e.g. A BTC perp funding-carry strategy. When 8-hour funding exceeds +0.04%, short the perp and hold spot to harvest the rate; exit when funding falls below +0.01%. ~600 trades over 18 months, net of a 6bps round-trip, with a hard stop at 2% and a time-stop after 48h..." class="w-full glass-surface rounded-2xl p-5 text-sm text-white font-light placeholder:text-neutral-600 outline-none focus:border-white/40 transition-colors resize-none leading-relaxed"></textarea>
+                <div class="flex items-center justify-between mt-4">
+                    <span id="se-count" class="text-[10px] font-mono text-neutral-600">0 words</span>
+                    <button id="se-go" onclick="seAnalyze()" class="glass-btn px-10 py-4 rounded-full bg-white text-black text-[10px] font-mono tracking-[0.3em] uppercase font-semibold hover:scale-[1.04] transition-transform duration-300">Analyze</button>
+                </div>
+                <div id="se-err" class="text-[10px] font-mono text-neutral-500 mt-3 min-h-[14px]"></div>
+                <p class="text-[9px] font-mono text-neutral-700 mt-6 leading-relaxed text-center">An honest design review of how validation-ready your idea is &mdash; not a market backtest. A real verdict needs real trades. Analytics, not financial advice.</p>
+            </div>
+        </div>
+        <!-- RESULT STAGE (horizontal) -->
+        <div id="se-result" class="hidden fixed inset-0 overflow-hidden">
+            <div id="se-track">
+                <section class="se-frame flex items-center px-6 sm:px-[8vw]">
+                    <div class="grid md:grid-cols-2 gap-10 items-center max-w-5xl mx-auto w-full">
+                        <div class="relative flex items-center justify-center order-1">
+                            <svg viewBox="0 0 220 220" class="w-64 h-64 sm:w-80 sm:h-80">
+                                <circle class="ring-track" cx="110" cy="110" r="96" stroke-width="9"></circle>
+                                <circle id="se-ring" class="ring-prog" cx="110" cy="110" r="96" stroke-width="9" stroke-dasharray="603" stroke-dashoffset="603"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <div id="se-score" class="text-7xl sm:text-8xl font-extralight text-white leading-none">0</div>
+                                <div class="text-[10px] font-mono tracking-[0.3em] uppercase text-neutral-500 mt-1">/ 100</div>
+                            </div>
+                        </div>
+                        <div class="order-2">
+                            <div class="text-[10px] font-mono tracking-[0.3em] uppercase text-neutral-500 mb-3">Validation readiness</div>
+                            <div id="se-tier" class="text-4xl sm:text-5xl font-light text-white tracking-tight mb-5">&mdash;</div>
+                            <p id="se-summary" class="text-sm text-neutral-400 font-light leading-relaxed max-w-md">&mdash;</p>
+                            <div class="text-[10px] font-mono text-neutral-600 mt-8 inline-flex items-center gap-2">Scroll to see the breakdown <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></div>
+                        </div>
+                    </div>
+                </section>
+                <section class="se-frame flex items-center px-6 sm:px-[8vw]">
+                    <div class="max-w-3xl mx-auto w-full">
+                        <div class="text-[10px] font-mono tracking-[0.3em] uppercase text-neutral-500 mb-2">The breakdown</div>
+                        <h3 class="text-3xl sm:text-4xl font-light text-white tracking-tight mb-8">Five marks of a <span class="font-serif italic text-neutral-400">survivable</span> edge.</h3>
+                        <div id="se-dims" class="space-y-5"></div>
+                    </div>
+                </section>
+                <section class="se-frame flex items-center px-6 sm:px-[8vw]">
+                    <div class="max-w-3xl mx-auto w-full">
+                        <div class="text-[10px] font-mono tracking-[0.3em] uppercase text-neutral-500 mb-2">What would move the needle</div>
+                        <h3 class="text-3xl sm:text-4xl font-light text-white tracking-tight mb-8">Make it <span class="font-serif italic text-neutral-400">provable.</span></h3>
+                        <div class="grid sm:grid-cols-2 gap-8">
+                            <div>
+                                <div class="text-[10px] font-mono tracking-[0.25em] uppercase text-neutral-500 mb-4">Red flags</div>
+                                <div id="se-flags" class="space-y-3"></div>
+                            </div>
+                            <div>
+                                <div class="text-[10px] font-mono tracking-[0.25em] uppercase text-neutral-500 mb-4">Prove it with</div>
+                                <div id="se-tests" class="space-y-3"></div>
+                            </div>
+                        </div>
+                        <button onclick="seReset()" class="mt-10 text-[10px] font-mono tracking-[0.25em] uppercase text-neutral-500 hover:text-white transition-colors inline-flex items-center gap-2"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Review another</button>
+                    </div>
+                </section>
+            </div>
+            <div class="fixed bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-[86]">
+                <div id="se-scroll-hint" class="flex items-center gap-2 text-[10px] font-mono tracking-[0.3em] uppercase text-neutral-500">
+                    <span>Scroll</span>
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5" style="animation:floaty 1.6s ease-in-out infinite"></i>
+                </div>
+                <div class="flex items-center gap-2.5">
+                    <span class="se-dot on" onclick="seFrame(0)"></span>
+                    <span class="se-dot" onclick="seFrame(1)"></span>
+                    <span class="se-dot" onclick="seFrame(2)"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- TRADE-LOG VALIDATOR OVERLAY -->
+    <div id="ov-tradelog" class="overlay" data-lenis-prevent>
+        <div class="orb" style="width:480px;height:480px;background:#1a2230;bottom:-150px;left:-110px;"></div>
+        <div class="fixed top-0 left-0 right-0 z-[85] flex items-center justify-between px-6 py-5 bg-gradient-to-b from-[#060709] to-transparent">
+            <button onclick="openChooser()" class="text-[10px] font-mono tracking-[0.25em] uppercase text-neutral-500 hover:text-white transition-colors inline-flex items-center gap-2"><i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Back</button>
+            <button onclick="closeOverlays()" class="w-9 h-9 rounded-full border border-neutral-700 text-neutral-400 hover:text-white hover:border-white transition-colors flex items-center justify-center"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
+        <div class="min-h-screen px-4 py-24 relative">
+            <div class="max-w-5xl mx-auto">
+                <div class="ov-in text-center mb-10">
+                    <div class="text-[10px] font-mono tracking-[0.3em] uppercase text-neutral-500 mb-4">Trade-Log Validation</div>
+                    <h2 class="text-3xl sm:text-5xl font-extralight text-white tracking-tight">Bring the <span class="font-serif italic text-neutral-400">receipts.</span></h2>
+                    <p class="text-sm text-neutral-400 font-light mt-4 max-w-lg mx-auto leading-relaxed">Drop a trade log or parameter sweep in any format. Monrch runs the deflated-Sharpe gauntlet on your real results &mdash; right here in your browser.</p>
+                </div>
+                <div class="ov-in mb-8 max-w-2xl mx-auto">
+                    <div id="mv-drop" class="group relative cursor-pointer rounded-2xl overflow-hidden p-[1px] bg-gradient-to-b from-neutral-700/70 via-neutral-900 to-neutral-900 hover:from-white/50 transition-all duration-500">
+                        <div class="relative rounded-2xl bg-[#070708] px-8 py-14 flex flex-col items-center justify-center gap-5 text-center overflow-hidden">
+                            <div class="mv-scan"></div>
+                            <div class="w-16 h-16 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center group-hover:scale-110 group-hover:border-white/30 transition-all duration-300">
+                                <i data-lucide="arrow-up-from-line" class="w-6 h-6 text-white"></i>
+                            </div>
+                            <div>
+                                <div id="mv-dropbig" class="text-xl sm:text-2xl font-light text-white tracking-tight">Drop your trade log here</div>
+                                <div id="mv-dropsub" class="text-[10px] font-mono text-neutral-500 tracking-[0.2em] uppercase mt-2">csv &middot; json &middot; xlsx &middot; mt4/5 &middot; any broker &mdash; just needs your trades</div>
+                            </div>
+                            <span class="px-6 py-2.5 rounded-full bg-white text-black text-[10px] font-mono tracking-[0.2em] uppercase group-hover:bg-neutral-200 transition-colors">Choose a file</span>
+                            <input id="mv-file" type="file" hidden>
+                        </div>
+                    </div>
+                    <div id="mv-status" class="text-[10px] font-mono text-neutral-500 mt-4 min-h-[16px] text-center"></div>
+
+                    <div class="text-center mt-5">
+                      <button id="mv-sample" class="text-[10px] font-mono tracking-[0.2em] uppercase text-white hover:text-neutral-300 transition-colors inline-flex items-center gap-2 border border-neutral-800 hover:border-white/40 rounded-full px-5 py-2.5"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Try it with sample data</button>
+                    </div>
+
+                    <!-- Quick manual entry: only the numbers every backtest report shows -->
+                    <div class="text-center mt-4">
+                      <button id="mv-manual-toggle" class="text-[10px] font-mono tracking-[0.2em] uppercase text-neutral-500 hover:text-white transition-colors border-b border-neutral-800 hover:border-white pb-0.5">No file? Type the key numbers &rarr;</button>
+                    </div>
+                    <div id="mv-manual" class="hidden mt-5 rounded-2xl border border-neutral-900 bg-[#070708] p-6 sm:p-7">
+                      <div class="text-[10px] font-mono tracking-[0.2em] uppercase text-neutral-500 mb-1">Quick check</div>
+                      <p class="text-xs text-neutral-500 font-light mb-5 leading-relaxed">Read these four off any backtest report. Monrch derives the rest.</p>
+                      <div class="grid grid-cols-2 gap-4">
+                        <label class="block"><span class="block text-[9px] font-mono tracking-[0.15em] uppercase text-neutral-500 mb-1.5">Number of trades</span>
+                          <input id="man-trades" type="number" min="2" step="1" placeholder="250" class="w-full bg-black border border-neutral-800 rounded-lg px-3 py-2.5 text-sm text-white focus:border-white outline-none transition-colors"></label>
+                        <label class="block"><span class="block text-[9px] font-mono tracking-[0.15em] uppercase text-neutral-500 mb-1.5">Win rate %</span>
+                          <input id="man-win" type="number" min="0" max="100" step="0.1" placeholder="55" class="w-full bg-black border border-neutral-800 rounded-lg px-3 py-2.5 text-sm text-white focus:border-white outline-none transition-colors"></label>
+                        <label class="block"><span class="block text-[9px] font-mono tracking-[0.15em] uppercase text-neutral-500 mb-1.5">Avg win ($)</span>
+                          <input id="man-aw" type="number" step="any" placeholder="40" class="w-full bg-black border border-neutral-800 rounded-lg px-3 py-2.5 text-sm text-white focus:border-white outline-none transition-colors"></label>
+                        <label class="block"><span class="block text-[9px] font-mono tracking-[0.15em] uppercase text-neutral-500 mb-1.5">Avg loss ($)</span>
+                          <input id="man-al" type="number" step="any" placeholder="25" class="w-full bg-black border border-neutral-800 rounded-lg px-3 py-2.5 text-sm text-white focus:border-white outline-none transition-colors"></label>
+                      </div>
+                      <div class="flex items-center justify-between mt-5">
+                        <span class="text-[9px] font-mono text-neutral-600">Optional: configs you searched
+                          <input id="man-configs" type="number" min="1" step="1" placeholder="1" class="w-14 ml-1 bg-black border border-neutral-800 rounded px-2 py-1 text-white text-center focus:border-white outline-none"></span>
+                        <button id="man-go" class="px-6 py-2.5 rounded-full bg-white text-black text-[10px] font-mono tracking-[0.2em] uppercase hover:bg-neutral-200 transition-colors">Validate</button>
+                      </div>
+                      <div id="man-msg" class="text-[10px] font-mono text-neutral-500 mt-3 min-h-[14px]"></div>
+                    </div>
+                </div>
+                <div id="mv-out" class="hidden pb-24">
+
+                <!-- POLISHED VERDICT HERO — the first thing shown on upload -->
+                <div id="mv-hero" class="rounded-3xl border border-neutral-900 bg-gradient-to-br from-neutral-900/40 to-[#060607] p-8 sm:p-12 mb-6">
+                  <div class="text-[10px] font-mono tracking-[0.4em] uppercase text-neutral-500 mb-5">Strategy Verdict</div>
+                  <h2 id="mv-hero-verdict" class="font-serif text-4xl sm:text-6xl font-light text-white leading-[1.05] mb-3">&mdash;</h2>
+                  <p id="mv-hero-sub" class="text-sm text-neutral-400 font-light leading-relaxed max-w-xl mb-10">Validated against the Deflated Sharpe Ratio &mdash; corrected for how many configurations were searched, the spread of results, and the number of trades.</p>
+                  <div class="flex flex-col sm:flex-row items-center gap-10">
+                    <div class="relative flex-none" style="width:168px;height:168px">
+                      <svg viewBox="0 0 120 120" class="w-full h-full">
+                        <circle cx="60" cy="60" r="52" fill="none" stroke="#171719" stroke-width="6"/>
+                        <circle id="mv-hero-ring" cx="60" cy="60" r="52" fill="none" stroke="#fff" stroke-width="6"
+                          stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset 1.3s cubic-bezier(.16,.7,.2,1)"
+                          stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+                      </svg>
+                      <div class="absolute inset-0 grid place-items-center text-center">
+                        <div>
+                          <div id="mv-hero-pct" class="font-mono text-5xl font-bold text-white leading-none tracking-tight">&mdash;</div>
+                          <div class="text-[9px] font-mono tracking-[0.25em] uppercase text-neutral-500 mt-2">Real edge</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex-1 w-full space-y-5">
+                      <div>
+                        <div class="flex justify-between items-baseline mb-2">
+                          <span class="text-[10px] font-mono tracking-[0.2em] uppercase text-neutral-500">Looks good (naive)</span>
+                          <span id="mv-hero-naive" class="text-xs font-mono text-neutral-400">&mdash;</span>
+                        </div>
+                        <div class="h-1.5 rounded-full bg-[#141416] overflow-hidden"><div id="mv-hero-nbar" class="h-full bg-neutral-500 rounded-full" style="width:0;transition:width 1.1s cubic-bezier(.16,.7,.2,1)"></div></div>
+                      </div>
+                      <div id="mv-hero-realwrap">
+                        <div class="flex justify-between items-baseline mb-2">
+                          <span class="text-[10px] font-mono tracking-[0.2em] uppercase text-white">Holds up (real)</span>
+                          <span id="mv-hero-real" class="text-xs font-mono text-white">&mdash;</span>
+                        </div>
+                        <div class="h-1.5 rounded-full bg-[#141416] overflow-hidden"><div id="mv-hero-rbar" class="h-full bg-white rounded-full" style="width:0;transition:width 1.3s cubic-bezier(.16,.7,.2,1) .15s"></div></div>
+                      </div>
+                      <p id="mv-hero-gap" class="text-[11px] text-neutral-500 leading-relaxed pt-1"></p>
+                    </div>
+                  </div>
+                  <!-- quick check chips -->
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-10">
+                    <div class="rounded-2xl border border-neutral-900 bg-black/30 p-4">
+                      <div class="flex items-center gap-2 mb-1.5"><span id="mv-chip-over-dot" class="w-2 h-2 rounded-full bg-neutral-700"></span><span class="text-[9px] font-mono tracking-[0.2em] uppercase text-neutral-500">Overfitting</span></div>
+                      <div id="mv-chip-over" class="text-sm text-white">&mdash;</div>
+                    </div>
+                    <div class="rounded-2xl border border-neutral-900 bg-black/30 p-4">
+                      <div class="flex items-center gap-2 mb-1.5"><span id="mv-chip-samp-dot" class="w-2 h-2 rounded-full bg-neutral-700"></span><span class="text-[9px] font-mono tracking-[0.2em] uppercase text-neutral-500">Sample size</span></div>
+                      <div id="mv-chip-samp" class="text-sm text-white">&mdash;</div>
+                    </div>
+                    <div class="rounded-2xl border border-neutral-900 bg-black/30 p-4">
+                      <div class="flex items-center gap-2 mb-1.5"><span id="mv-chip-cost-dot" class="w-2 h-2 rounded-full bg-neutral-700"></span><span class="text-[9px] font-mono tracking-[0.2em] uppercase text-neutral-500">Cost survival</span></div>
+                      <div id="mv-chip-cost" class="text-sm text-white">&mdash;</div>
+                    </div>
+                  </div>
+                  <!-- share + detail toggle -->
+                  <div class="flex flex-wrap items-center gap-4 mt-8">
+                    <button id="mv-hero-share" class="px-6 py-2.5 rounded-full bg-white text-black text-[10px] font-mono tracking-[0.2em] uppercase hover:bg-neutral-200 transition-colors">Share this verdict</button>
+                    <button id="mv-detail-toggle" class="text-[10px] font-mono tracking-[0.2em] uppercase text-neutral-500 hover:text-white transition-colors border-b border-neutral-800 hover:border-white pb-0.5">See the full breakdown &darr;</button>
+                    <span id="mv-hero-sharemsg" class="text-[10px] font-mono text-neutral-500"></span>
+                  </div>
+                </div>
+
+                <div id="mv-detail" class="hidden">
+                <div class="rounded-xl border border-neutral-950 bg-[#050505] p-6 sm:p-8">
+                    <div class="flex flex-wrap gap-x-8 gap-y-2 text-[9px] font-mono tracking-[0.2em] uppercase text-neutral-500 border-b border-neutral-900 pb-5 mb-6">
+                        <span>STRATEGY <b id="mv-id" class="text-white font-semibold">&mdash;</b></span>
+                        <span id="mv-nwrap">SEARCH <b id="mv-n" class="text-white font-semibold">&mdash;</b></span>
+                        <span>TRADES <b id="mv-trd" class="text-white font-semibold">&mdash;</b></span>
+                        <span>WIN <b id="mv-win" class="text-white font-semibold">&mdash;</b></span>
+                        <span>RPT <b id="mv-rpt" class="text-white font-semibold">&mdash;</b></span>
+                        <span id="mv-pickwrap" class="ml-auto flex items-center gap-2">INSPECT
+                            <select id="mv-pick" class="bg-black border border-neutral-800 text-white font-mono text-[9px] px-2 py-1 rounded focus:border-white outline-none"></select>
+                        </span>
+                    </div>
+
+                    <div id="mv-verdict" class="rounded-lg border border-neutral-900 border-l-2 border-l-white bg-black/40 px-6 py-5 mb-6">
+                        <div class="text-[9px] font-mono tracking-[0.25em] uppercase text-neutral-500">Verdict</div>
+                        <div id="mv-vtext" class="text-2xl sm:text-3xl font-light text-white tracking-tight mt-1">&mdash;</div>
+                    </div>
+
+                    <div id="mv-gap" class="rounded-lg border border-neutral-900 bg-black/40 px-6 py-6 mb-6">
+                        <div class="text-xs uppercase tracking-[0.2em] text-neutral-400 font-medium mb-1">The honesty gap</div>
+                        <div class="text-[10px] font-mono text-neutral-600 mb-6">What a backtest leaderboard shows you, versus what is true after the search.</div>
+                        <div class="mb-5">
+                            <div class="flex justify-between text-[9px] font-mono uppercase tracking-[0.2em] mb-2">
+                                <span class="text-neutral-400">Naive confidence &mdash; what you would see</span>
+                                <span id="mv-naive-pct" class="text-white text-sm">&mdash;</span>
+                            </div>
+                            <div class="h-3 bg-black border border-neutral-900 rounded overflow-hidden">
+                                <div id="mv-naive-fill" class="h-full bg-white transition-all duration-700" style="width:0"></div>
+                            </div>
+                        </div>
+                        <div id="mv-realrow">
+                            <div class="flex justify-between text-[9px] font-mono uppercase tracking-[0.2em] mb-2">
+                                <span class="text-neutral-400">Survives the search &mdash; what is real</span>
+                                <span id="mv-real-pct" class="text-white text-sm">&mdash;</span>
+                            </div>
+                            <div class="h-3 bg-black border border-neutral-900 rounded overflow-hidden">
+                                <div id="mv-real-fill" class="h-full bg-neutral-500 transition-all duration-700" style="width:0"></div>
+                            </div>
+                        </div>
+                        <div id="mv-chasm" class="text-[10px] font-mono text-neutral-500 mt-5 leading-relaxed"></div>
+                    </div>
+
+                    <div id="mv-checks" class="rounded-lg border border-neutral-900 overflow-hidden mb-8"></div>
+
+                    <div id="mv-guide" class="rounded-lg border border-neutral-900 bg-black/40 px-6 py-6 mb-8">
+                      <div class="flex items-baseline justify-between mb-1">
+                        <div class="text-xs uppercase tracking-[0.2em] text-neutral-400 font-medium">What we&rsquo;d do next</div>
+                        <div class="text-[9px] font-mono tracking-[0.2em] uppercase text-neutral-600">Monrch&rsquo;s take</div>
+                      </div>
+                      <div class="text-[10px] font-mono text-neutral-600 mb-5">Our opinion on how to harden this, based on where it cracked. Validation guidance &mdash; not financial advice.</div>
+                      <ul id="mv-guide-list" class="space-y-3"></ul>
+                    </div>
+
+                    <div id="mv-sharewrap" class="mb-8">
+                      <button id="mv-share" class="group w-full flex items-center justify-between gap-4 rounded-xl border border-neutral-900 bg-black/40 px-5 py-4 hover:border-white/25 transition-colors duration-200">
+                        <div class="text-left">
+                          <div class="text-[9px] font-mono tracking-[0.2em] uppercase text-neutral-500 mb-1">Share this verdict</div>
+                          <div class="text-xs text-white">Get a link &amp; an embeddable Monrch badge</div>
+                        </div>
+                        <span id="mv-share-lbl" class="text-[10px] font-mono tracking-[0.2em] uppercase text-neutral-500 group-hover:text-white flex-none">Copy link</span>
+                      </button>
+                      <div id="mv-share-extra" class="hidden mt-3 rounded-xl border border-neutral-900 bg-black/40 px-5 py-4">
+                        <div class="text-[9px] font-mono tracking-[0.2em] uppercase text-neutral-500 mb-2">Embed badge (HTML)</div>
+                        <code id="mv-embed" class="block text-[10px] font-mono text-neutral-400 break-all leading-relaxed mb-3"></code>
+                        <button id="mv-embed-copy" class="text-[10px] font-mono tracking-[0.2em] uppercase text-neutral-500 hover:text-white transition-colors">Copy embed code</button>
+                        <a id="mv-open" href="#" target="_blank" rel="noopener" class="ml-5 text-[10px] font-mono tracking-[0.2em] uppercase text-neutral-500 hover:text-white transition-colors">Open verdict page &rarr;</a>
+                      </div>
+                    </div>
+
+                    <div id="mv-scanwrap">
+                        <div class="text-[9px] font-mono tracking-[0.2em] uppercase text-neutral-500 mb-3">Top configs by P&amp;L &mdash; naive vs real</div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-[10px] font-mono whitespace-nowrap">
+                                <thead><tr class="text-neutral-600 border-b border-neutral-900">
+                                    <th class="text-left py-2 pr-2 font-normal">#</th><th class="text-left py-2 pr-2 font-normal">ID</th>
+                                    <th class="text-right py-2 px-2 font-normal">TRD</th><th class="text-right py-2 px-2 font-normal">WIN%</th>
+                                    <th class="text-right py-2 px-2 font-normal">RPT$</th><th class="text-right py-2 px-2 font-normal">NET$</th>
+                                    <th class="text-right py-2 px-2 font-normal">NAIVE%</th><th class="text-right py-2 px-2 font-normal">DSR%</th>
+                                    <th class="text-right py-2 pl-2 font-normal">VERDICT</th>
+                                </tr></thead>
+                                <tbody id="mv-scan"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="text-[9px] font-mono text-neutral-700 mt-5 leading-relaxed border-t border-neutral-900 pt-4">
+                        Overfitting scored via the Deflated Sharpe Ratio (Bailey &amp; L&oacute;pez de Prado): corrects the apparent edge for how many configs were searched, the spread of results, and the number of trades. Returns modeled as a two-outcome distribution from the summary stats &mdash; the optimistic case, so a FAIL is conservative. Regime &amp; holdout checks need per-trade timestamps. Analytics, not financial advice.
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        // Initialize SVGs
+        lucide.createIcons();
+
+        // 1. FUTURISTIC LOADER CODE
+        document.addEventListener("DOMContentLoaded", () => {
+            const loader = document.getElementById("loader");
+            const loaderBar = document.getElementById("loaderBar");
+            const loaderPercent = document.getElementById("loaderPercent");
+            const loaderStatus = document.getElementById("loaderStatus");
+
+            const statusStatements = [
+                "Establishing secure gateway protocols...",
+                "Mapping multi-node routing connections...",
+                "Validating core ledger decryption keys...",
+                "Structuring 3D particle coordinate values...",
+                "Sync complete. Welcome."
+            ];
+
+            let progress = 0;
+            let statusIndex = 0;
+
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 8) + 4;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    setTimeout(() => {
+                        loader.style.opacity = "0";
+                        loader.style.pointerEvents = "none";
+                        activeScrollReveal();
+                    }, 800);
+                }
+
+                loaderPercent.innerText = `${progress.toString().padStart(2, '0')}%`;
+                loaderBar.style.width = `${progress}%`;
+
+                if (progress > (statusIndex + 1) * 20 && statusIndex < statusStatements.length) {
+                    loaderStatus.innerText = statusStatements[statusIndex];
+                    statusIndex++;
+                }
+            }, 80);
+        });
+
+        // 2. SCROLL REVEAL UTILITY
+        const revealElements = document.querySelectorAll('.reveal');
+        const activeScrollReveal = () => {
+            const triggerBottom = window.innerHeight * 0.9;
+            revealElements.forEach(el => {
+                const elementTop = el.getBoundingClientRect().top;
+                if (elementTop < triggerBottom) {
+                    el.classList.add('active');
+                }
+            });
+        };
+        window.addEventListener('scroll', activeScrollReveal);
+
+
+        // ==========================================
+        // 3. ULTRA DENSE 3D PARTICLE WAVE ENGINE
+        // ==========================================
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width = (canvas.width = window.innerWidth);
+        let height = (canvas.height = window.innerHeight);
+
+        const numRows = 45;
+        const numCols = 60;
+        const spacingX = (width / (numCols - 1)) * 1.3;
+        const spacingY = (height / (numRows - 1)) * 1.2;
+        
+        let count = 0;
+        let mouseX = 0;
+        let mouseY = 0;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX - width / 2;
+            mouseY = e.clientY - height / 2;
+        });
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        const renderWave = () => {
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, width, height);
+
+            count += 0.012; // Slow elegant oscillation pace
+
+            // First pass: compute every projected point so we can thread lines through them
+            const pts = [];
+            for (let r = 0; r < numRows; r++) {
+                pts[r] = [];
+                for (let c = 0; c < numCols; c++) {
+                    const x = c * spacingX - (width * 0.15);
+                    const y = r * spacingY - (height * 0.15);
+
+                    const wave1 = Math.sin(c * 0.12 + count) * 45;
+                    const wave2 = Math.cos(r * 0.1 + count * 0.7) * 35;
+                    const wave3 = Math.sin((c + r) * 0.05 + count * 0.5) * 15;
+                    const z = wave1 + wave2 + wave3;
+
+                    const focalLength = 350;
+                    const scale = focalLength / (focalLength + z);
+
+                    const dx = x - (width / 2 + mouseX * 0.25);
+                    const dy = y - (height / 2 + mouseY * 0.25);
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const force = Math.max(0, (250 - dist) / 250);
+
+                    const projX = width / 2 + (x - width / 2 + (dx * force * 0.2)) * scale;
+                    const projY = height / 2 + (y - height / 2 + (dy * force * 0.2 + z)) * scale;
+                    const alpha = Math.max(0.04, Math.min(0.7, scale * 0.5));
+                    pts[r][c] = { x: projX, y: projY, z: z, scale: scale, alpha: alpha };
+                }
+            }
+
+            // ---- moving dotted lines: thread faint dashed strokes through the grid ----
+            ctx.lineWidth = 1;
+            const dashPhase = (count * 90) % 14; // animates the dash flow
+            ctx.setLineDash([2, 7]);
+            ctx.lineDashOffset = -dashPhase;
+            // horizontal flowing lines (every 3rd row)
+            for (let r = 0; r < numRows; r += 3) {
+                ctx.beginPath();
+                for (let c = 0; c < numCols; c++) {
+                    const p = pts[r][c];
+                    if (c === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+                }
+                ctx.strokeStyle = `rgba(255,255,255,${0.10})`;
+                ctx.stroke();
+            }
+            // vertical flowing lines (every 4th col), dash flows the other way
+            ctx.lineDashOffset = dashPhase;
+            for (let c = 0; c < numCols; c += 4) {
+                ctx.beginPath();
+                for (let r = 0; r < numRows; r++) {
+                    const p = pts[r][c];
+                    if (r === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+                }
+                ctx.strokeStyle = `rgba(255,255,255,${0.08})`;
+                ctx.stroke();
+            }
+            // drifting diagonal threads that undulate with the wave
+            ctx.setLineDash([2.5, 10]);
+            ctx.lineDashOffset = -dashPhase * 1.4;
+            for (let d = 0; d < 8; d++) {
+                const r0 = Math.floor((Math.sin(count * 0.3 + d * 1.1) * 0.5 + 0.5) * (numRows - 1));
+                ctx.beginPath();
+                for (let c = 0; c < numCols; c++) {
+                    const rr = Math.min(numRows - 1, Math.max(0, r0 + Math.round(Math.sin(c * 0.15 + count + d) * 3)));
+                    const p = pts[rr][c];
+                    if (c === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+                }
+                ctx.strokeStyle = `rgba(255,255,255,${0.15})`;
+                ctx.stroke();
+            }
+            // a couple of bright "pulse" lines that sweep across, brighter and faster
+            ctx.setLineDash([3, 6]);
+            ctx.lineDashOffset = -dashPhase * 2.6;
+            for (let d = 0; d < 2; d++) {
+                const sweep = ((count * 0.12 + d * 0.5) % 1) * (numRows - 1);
+                const r0 = Math.floor(sweep);
+                ctx.beginPath();
+                for (let c = 0; c < numCols; c++) {
+                    const rr = Math.min(numRows - 1, Math.max(0, r0 + Math.round(Math.sin(c * 0.2 + count * 1.5) * 2)));
+                    const p = pts[rr][c];
+                    if (c === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+                }
+                ctx.strokeStyle = `rgba(255,255,255,${0.22})`;
+                ctx.stroke();
+            }
+            ctx.setLineDash([]);
+
+            // Second pass: draw the dots on top
+            for (let r = 0; r < numRows; r++) {
+                for (let c = 0; c < numCols; c++) {
+                    const p = pts[r][c];
+                    const isHighlight = (r + c) % 15 === 0;
+                    if (isHighlight) {
+                        ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha * 0.85})`;
+                    } else {
+                        ctx.fillStyle = `rgba(200, 200, 200, ${p.alpha * 0.2})`;
+                    }
+                    const size = Math.max(0.75, (p.z + 80) * 0.035) * p.scale;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            requestAnimationFrame(renderWave);
+        };
+
+        renderWave();
+    </script>
+    <script>
+/* Monrch engine: universal parser + verified validator math.
+   Pure functions, testable in node; also attaches to window in browser. */
+(function(root){
+  /* ---------- verified math (matches Python engine) ---------- */
+  function erf(x){var s=x<0?-1:1;x=Math.abs(x);var t=1/(1+0.3275911*x);
+    var y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x);return s*y;}
+  function normCdf(x){return 0.5*(1+erf(x/Math.SQRT2));}
+  function normPpf(p){
+    var a=[-3.969683028665376e+01,2.209460984245205e+02,-2.759285104469687e+02,1.383577518672690e+02,-3.066479806614716e+01,2.506628277459239e+00];
+    var b=[-5.447609879822406e+01,1.615858368580409e+02,-1.556989798598866e+02,6.680131188771972e+01,-1.328068155288572e+01];
+    var c=[-7.784894002430293e-03,-3.223964580411365e-01,-2.400758277161838e+00,-2.549732539343734e+00,4.374664141464968e+00,2.938163982698783e+00];
+    var d=[7.784695709041462e-03,3.224671290700398e-01,2.445134137142996e+00,3.754408661907416e+00];
+    var pl=0.02425,ph=1-pl,q,r;
+    if(p<pl){q=Math.sqrt(-2*Math.log(p));return(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);}
+    if(p<=ph){q=p-0.5;r=q*q;return(((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);}
+    q=Math.sqrt(-2*Math.log(1-p));return-(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
+  }
+  var GAMMA=0.5772156649015329,E=Math.E;
+  function recoverTwoPoint(p,pf,rpt){if(!isFinite(pf)||pf<=0||pf===1)return null;if(!(p>0&&p<1))return null;
+    var den=(1-p)*(pf-1);if(den===0)return null;var L=rpt/den;if(!isFinite(L)||L<=0)return null;
+    var W=pf*(1-p)*L/p;if(!isFinite(W)||W<=0)return null;return[W,L];}
+  function moments(W,L,p){var mean=p*W-(1-p)*L,e2=p*W*W+(1-p)*L*L,v=e2-mean*mean;if(v<=0)return null;
+    var sd=Math.sqrt(v);var m3=p*Math.pow(W-mean,3)+(1-p)*Math.pow(-L-mean,3);
+    var m4=p*Math.pow(W-mean,4)+(1-p)*Math.pow(-L-mean,4);return[mean,sd,m3/Math.pow(sd,3),m4/Math.pow(sd,4)];}
+  function psr(sr,bm,n,sk,ku){if(n<=1)return NaN;var d=1-sk*sr+(ku-1)/4*sr*sr;if(d<=0)return NaN;
+    return normCdf((sr-bm)*Math.sqrt(n-1)/Math.sqrt(d));}
+  function expMaxSharpe(varSr,N){if(N<2||varSr<=0)return 0;return Math.sqrt(varSr)*((1-GAMMA)*normPpf(1-1/N)+GAMMA*normPpf(1-1/(N*E)));}
+
+  /* ---------- number + header cleaning ---------- */
+  function cleanNum(v,dc){
+    if(v==null)return NaN;
+    if(typeof v==='number')return v;
+    var s=String(v).trim();
+    if(s==='')return NaN;
+    var neg=/^\(.*\)$/.test(s); // accounting negatives
+    s=s.replace(/[()$\s%]/g,'');
+    if(dc){ s=s.replace(/\./g,'').replace(',','.'); } // EU: dot=thousands, comma=decimal
+    else { s=s.replace(/,/g,''); }                    // US: comma=thousands
+    var n=parseFloat(s);
+    if(!isFinite(n))return NaN;
+    return neg?-n:n;
+  }
+  function isAsc(a){for(var i=1;i<a.length;i++)if(a[i]<=a[i-1])return false;return true;}
+  // find the P&L column by the SHAPE of its values when the header name is unknown
+  function pickPnl(headers,rows,m,dc){
+    var best=-1,bestScore=-2;
+    for(var j=0;j<headers.length;j++){
+      if(j===m.id||j===m.trades||j===m.winrate||j===m.rpt||j===m.pf)continue;
+      var vals=rows.map(function(r){return cleanNum(r[headers[j]],dc);});
+      var fin=vals.filter(function(x){return isFinite(x);});
+      if(fin.length<Math.max(2,rows.length*0.4))continue; // mostly numeric
+      var negs=fin.filter(function(x){return x<0;}).length;
+      var dd={};fin.forEach(function(x){dd[x]=1;});var nd=Object.keys(dd).length;
+      var looksIndex = negs===0 && nd===fin.length && fin.every(function(x){return Number.isInteger(x);}) && isAsc(fin);
+      if(looksIndex)continue;                 // 1,2,3... is a row index, not P&L
+      var sc=(negs>0?100:0)+nd+j*0.01;        // prefer a signed column; tie-break rightmost
+      if(sc>bestScore){bestScore=sc;best=j;}
+    }
+    return best;
+  }
+  function norm(h){return String(h).toLowerCase().replace(/[^a-z0-9]/g,'');}
+  var ALIASES={
+    id:['id','configid','config','strategy','strategyid','run','runid','variant','combo','name','ticket','order','orderid','dealid','position','positionid'],
+    trades:['trades','numtrades','tradecount','ntrades','totaltrades','count','samples','numberoftrades','nooftrades'],
+    winrate:['winrate','winpct','winpercent','hitrate','winratio','win','winningpct','winperc','pctwin','successrate'],
+    rpt:['rpt','avgpnl','avgprofit','meanpnl','pertrade','expectancy','avgtrade','avgreturn','averagepnl','avgpl','averageprofit'],
+    pnl:['pnl','pl','netpl','netpandl','profit','net','netpnl','result','gain','realizedpnl','totalpnl','profitloss','realized','netprofit','pandl','grossprofit','tradepnl','dollarpnl','profitusd','pnlusd','pnlamount','pnlquote','closedpnl','realizedprofit','payout','points','pips'],
+    ret:['return','returnpct','returnpercent','roi','pctreturn','returns','changepct','pctchange','percentreturn','retpct','pnlpct','pnlpercent','profitpct','gainpct','yield'],
+    entry:['entry','entryprice','openprice','priceopen','buyprice','priceentry','avgentryprice','fillprice','entryfill','pricein','inprice'],
+    exit:['exit','exitprice','closeprice','priceclose','sellprice','priceexit','avgexitprice','priceout','outprice'],
+    qty:['qty','quantity','size','amount','volume','shares','units','contracts','lots','positionsize','filledqty','baseamount'],
+    side:['side','direction','buysell','action','longshort','tradeside','positionside'],
+    pf:['profitfactor','pf'],
+    avgwin:['avgwin','averagewin','avgprofit','meanwin','avgwinner','avgwinningtrade','averagewinningtrade','avgwintrade'],
+    avgloss:['avgloss','averageloss','meanloss','avgloser','avglosingtrade','averagelosingtrade','avglosstrade'],
+    totalpnl:['totalpnl','totalprofit','netprofit','totalnet','totalreturn','totalpl','totalpandl','cumulativepnl','grossprofit','totalgain'],
+    wins:['wins','winningtrades','numwins','winners'],
+    losses:['losses','losingtrades','numlosses','losers']
+  };
+  function matchCol(headerNorms, aliases){
+    // exact match first
+    for(var i=0;i<aliases.length;i++){var a=aliases[i];
+      for(var j=0;j<headerNorms.length;j++) if(headerNorms[j]===a) return j;}
+    // then 'contains' for aliases of length>=4 (avoid 'win'/'pl' false hits)
+    for(var i2=0;i2<aliases.length;i2++){var a2=aliases[i2]; if(a2.length<4) continue;
+      for(var j2=0;j2<headerNorms.length;j2++) if(headerNorms[j2].indexOf(a2)>=0) return j2;}
+    return -1;
+  }
+  function mapColumns(headers){
+    var hn=headers.map(norm),m={};
+    for(var k in ALIASES) m[k]=matchCol(hn,ALIASES[k]);
+    return m;
+  }
+  // does this row look like a header (words) rather than data (numbers)?
+  function looksHeaderRow(cells){
+    if(!cells||!cells.length)return false;
+    var alpha=0,num=0;
+    cells.forEach(function(c){var s=String(c||'').trim();if(!s)return;
+      if(isFinite(cleanNum(s,false)))num++;else if(/[a-z]/i.test(s))alpha++;});
+    return alpha>=1 && alpha>=num;
+  }
+
+  /* ---------- delimiter sniff + tabular parse ---------- */
+  function sniffDelim(text){
+    var lines=text.split(/\r?\n/).filter(function(l){return l.trim();}).slice(0,60);
+    var cands=[',','\t',';','|'];
+    // pick the delimiter that yields the highest consistent column count across lines
+    var best=',',bestScore=0;
+    cands.forEach(function(d){
+      var counts={};
+      lines.forEach(function(l){var n=l.split(d).length;if(n>1)counts[n]=(counts[n]||0)+1;});
+      var topN=0,topW=1;
+      for(var w in counts){if(counts[w]>topN){topN=counts[w];topW=+w;}}
+      var sc=topN*(topW-1); // reward many lines * many columns
+      if(sc>bestScore){bestScore=sc;best=d;}
+    });
+    if(bestScore===0){ // no delimiter splits anything -> whitespace fallback
+      var probe=lines.find(function(l){return /\s{2,}|\t/.test(l);});
+      if(probe) return /\s+/;
+    }
+    return best;
+  }
+  function splitLine(line,delim){
+    if(delim instanceof RegExp) return line.trim().split(delim);
+    // simple quoted-field aware split
+    var out=[],cur='',q=false;
+    for(var i=0;i<line.length;i++){var ch=line[i];
+      if(ch==='"'){q=!q;continue;}
+      if(ch===delim && !q){out.push(cur);cur='';continue;}
+      cur+=ch;}
+    out.push(cur);return out.map(function(s){return s.trim();});
+  }
+  function parseTabular(text){
+    var rawLines=text.split(/\r?\n/).filter(function(l){return l.trim();});
+    if(rawLines.length<2){
+      // maybe a one-number-per-line P&L list with no header
+      if(rawLines.length===1 && isFinite(cleanNum(rawLines[0],false)))
+        return {headers:['pnl'],rows:[{pnl:rawLines[0]}],delim:',',singleCol:true};
+      return null;
+    }
+    var delim=sniffDelim(text);
+    var scan=rawLines.slice(0,60).map(function(l){return splitLine(l,delim).length;});
+    // The real table width is the MODAL (most common) column count among lines
+    // that have >1 column — this ignores stray preamble lines.
+    var freq={};scan.forEach(function(w){if(w>1)freq[w]=(freq[w]||0)+1;});
+    var modalW=0,modalCount=0;
+    for(var w in freq){if(freq[w]>modalCount||(freq[w]===modalCount&&+w>modalW)){modalCount=freq[w];modalW=+w;}}
+    var maxW=modalW||Math.max.apply(null,scan);
+    var headerIdx=0;
+    if(maxW>=2){
+      // first line AT the table width that looks like a header (words); else first at width
+      var firstAtWidth=-1;
+      for(var i=0;i<scan.length;i++){
+        if(scan[i]===maxW){
+          if(firstAtWidth<0)firstAtWidth=i;
+          var cells=splitLine(rawLines[i],delim);
+          if(looksHeaderRow(cells)){headerIdx=i;break;}
+        }
+        if(i===scan.length-1)headerIdx=firstAtWidth>=0?firstAtWidth:0;
+      }
+    }
+    // Headerless numeric table (no word row anywhere at full width)?
+    var headerCells=splitLine(rawLines[headerIdx],delim);
+    var headerless = !looksHeaderRow(headerCells);
+    if(headerless){
+      // single column of numbers => treat as raw P&L list
+      if(maxW===1){
+        var nums=rawLines.filter(function(l){return isFinite(cleanNum(l,false));});
+        if(nums.length>=2) return {headers:['pnl'],rows:nums.map(function(n){return {pnl:n};}),delim:delim,singleCol:true};
+      }
+      // multi-column but no header: synthesize column names col1..colN
+      var synth=[];for(var c=0;c<maxW;c++)synth.push('col'+(c+1));
+      var rowsH=[];
+      rawLines.forEach(function(l){var cells=splitLine(l,delim);
+        if(cells.length<2)return;var o={};for(var j=0;j<synth.length;j++)o[synth[j]]=cells[j];rowsH.push(o);});
+      return {headers:synth,rows:rowsH,delim:delim,headerless:true};
+    }
+    var headers=headerCells;
+    var rows=[];
+    for(var k=headerIdx+1;k<rawLines.length;k++){
+      var cells2=splitLine(rawLines[k],delim);
+      if(cells2.length<2 && headers.length>1)continue; // skip stray/footer lines
+      var o2={};for(var j2=0;j2<headers.length;j2++)o2[headers[j2]]=cells2[j2];
+      rows.push(o2);
+    }
+    return {headers:headers,rows:rows,delim:delim};
+  }
+
+  /* ---------- build normalized configs from any parsed table ---------- */
+  function aggregateLog(pnls,id){
+    var fin=pnls.filter(function(x){return isFinite(x);});
+    var trades=fin.length; if(trades===0) return null;
+    var wins=fin.filter(function(x){return x>0;}).length;
+    var gw=fin.filter(function(x){return x>0;}).reduce(function(a,b){return a+b;},0);
+    var gl=-fin.filter(function(x){return x<0;}).reduce(function(a,b){return a+b;},0);
+    var total=fin.reduce(function(a,b){return a+b;},0);
+    return {id:id, trades:trades, win_rate:wins/trades, rpt:total/trades,
+      pnl:total, profit_factor: gl>0?gw/gl:(gw>0?Infinity:0)};
+  }
+  function tableToConfigs(headers,rows,dc){
+    var m=mapColumns(headers);
+    // Summary mode needs win rate + trades, plus ANY one of:
+    //   profit factor | (avg win & avg loss) | (rpt or total pnl, with the other derivable)
+    // We derive whatever's missing so traders only supply what their report shows.
+    var canDeriveEdge = m.pf>=0 || (m.avgwin>=0&&m.avgloss>=0) || m.rpt>=0 || (m.totalpnl>=0&&m.trades>=0);
+    var hasSummary = m.winrate>=0 && m.trades>=0 && canDeriveEdge;
+    if(hasSummary){
+      var configs=rows.map(function(r,idx){
+        var wr=cleanNum(r[headers[m.winrate]],dc); if(wr>1) wr=wr/100;
+        var trd=cleanNum(r[headers[m.trades]],dc);
+        var aw=m.avgwin>=0?cleanNum(r[headers[m.avgwin]],dc):NaN;
+        var al=m.avgloss>=0?Math.abs(cleanNum(r[headers[m.avgloss]],dc)):NaN;
+        var rpt=m.rpt>=0?cleanNum(r[headers[m.rpt]],dc):NaN;
+        var pf =m.pf>=0?cleanNum(r[headers[m.pf]],dc):NaN;
+        var pnl=m.pnl>=0?cleanNum(r[headers[m.pnl]],dc):(m.totalpnl>=0?cleanNum(r[headers[m.totalpnl]],dc):NaN);
+
+        // derive rpt if missing
+        if(!isFinite(rpt)){
+          if(isFinite(pnl)&&isFinite(trd)&&trd>0) rpt=pnl/trd;
+          else if(isFinite(aw)&&isFinite(al)) rpt=wr*aw-(1-wr)*al;
+        }
+        // derive profit factor if missing
+        if(!isFinite(pf)){
+          if(isFinite(aw)&&isFinite(al)&&al>0&&wr<1) pf=(wr*aw)/((1-wr)*al);
+          // else: leave NaN; recoverTwoPoint handles wr+pf+rpt, and we can fall back below
+        }
+        // last-ditch: if we still lack pf but have rpt and avg loss, infer avg win
+        if(!isFinite(pf)&&isFinite(rpt)&&isFinite(al)&&al>0&&wr>0){
+          var impliedAw=(rpt+(1-wr)*al)/wr;
+          if(impliedAw>0) pf=(wr*impliedAw)/((1-wr)*al);
+        }
+        if(!isFinite(pnl)&&isFinite(rpt)&&isFinite(trd)) pnl=rpt*trd;
+        var id=m.id>=0?r[headers[m.id]]:(idx+1);
+        return {id:id,trades:trd,win_rate:wr,rpt:rpt,pnl:pnl,profit_factor:pf};
+      }).filter(function(c){return isFinite(c.trades)&&isFinite(c.rpt)&&isFinite(c.win_rate)&&isFinite(c.profit_factor);});
+      if(configs.length) return {mode: configs.length>1?'sweep':'single', configs:configs, via:'summary'};
+    }
+    // raw trade log: find P&L by name, else derive it, else by value-shape
+    var pnlCol = m.pnl;
+    var derived = null; // array of derived per-row pnl values
+
+    if(pnlCol<0){
+      // (a) return % column -> use as the per-trade "pnl" proxy (unitless edge)
+      if(m.ret>=0){
+        derived = rows.map(function(r){var x=cleanNum(r[headers[m.ret]],dc);
+          // if values look like whole percents (e.g. 2.5 not 0.025), scale down
+          return x;});
+        var maxAbs=Math.max.apply(null,derived.filter(isFinite).map(Math.abs).concat([0]));
+        if(maxAbs>1.5){ derived=derived.map(function(x){return isFinite(x)?x/100:x;}); }
+      }
+      // (b) entry + exit (+qty, +side) -> compute P&L per trade
+      else if(m.entry>=0 && m.exit>=0){
+        derived = rows.map(function(r){
+          var en=cleanNum(r[headers[m.entry]],dc), ex=cleanNum(r[headers[m.exit]],dc);
+          if(!isFinite(en)||!isFinite(ex))return NaN;
+          var q = m.qty>=0?cleanNum(r[headers[m.qty]],dc):1; if(!isFinite(q)||q===0)q=1;
+          var dir=1;
+          if(m.side>=0){var sv=norm(r[headers[m.side]]);
+            if(/short|sell|sld|s$/.test(sv))dir=-1;}
+          return (ex-en)*q*dir;
+        });
+      }
+    }
+
+    if(pnlCol>=0 || derived){
+      var ids=[],pnls=[];
+      rows.forEach(function(r,i){
+        ids.push(m.id>=0?String(r[headers[m.id]]):'__all__');
+        pnls.push(derived?derived[i]:cleanNum(r[headers[pnlCol]],dc));
+      });
+      var distinct={};ids.forEach(function(x){distinct[x]=1;});var nd=Object.keys(distinct).length;
+      var groupByID = m.id>=0 && nd>1 && nd<rows.length;
+      var groups={};
+      if(groupByID){rows.forEach(function(_,i){(groups[ids[i]]=groups[ids[i]]||[]).push(pnls[i]);});}
+      else {groups['__all__']=pnls;}
+      var gids=Object.keys(groups);
+      var configs2=gids.map(function(g){return aggregateLog(groups[g], g==='__all__'?'your strategy':g);})
+                       .filter(Boolean);
+      if(!configs2.length) return null;
+      return {mode: configs2.length>1?'sweep':'single', configs:configs2, via:'tradelog'};
+    }
+    // last resort: shape-detect a P&L-looking column
+    var guess = pickPnl(headers,rows,m,dc);
+    if(guess>=0){
+      var gp=rows.map(function(r){return cleanNum(r[headers[guess]],dc);});
+      var cfg=aggregateLog(gp,'your strategy');
+      if(cfg) return {mode:'single',configs:[cfg],via:'tradelog'};
+    }
+    return null;
+  }
+
+  /* ---------- top-level: parse any text / json ---------- */
+  function flatten1(o){ // flatten one level of nested objects: {a:{b:1}} -> {a_b:1}
+    var out={};for(var k in o){var v=o[k];
+      if(v&&typeof v==='object'&&!Array.isArray(v)){for(var k2 in v)out[k+'_'+k2]=v[k2];}
+      else out[k]=v;}
+    return out;
+  }
+  function findArray(data){
+    if(Array.isArray(data))return data;
+    if(data&&typeof data==='object'){
+      var keys=['rows','data','trades','results','orders','fills','positions','history','transactions','deals','executions'];
+      for(var i=0;i<keys.length;i++)if(Array.isArray(data[keys[i]]))return data[keys[i]];
+      // else: first array-valued property
+      for(var k in data)if(Array.isArray(data[k])&&data[k].length&&typeof data[k][0]==='object')return data[k];
+    }
+    return null;
+  }
+  function parseAny(text){
+    var t=text.replace(/^\uFEFF/,'').trim();
+    if(t[0]==='['||t[0]==='{'){
+      try{
+        var data=JSON.parse(t);
+        var arr=findArray(data);
+        if(Array.isArray(arr)&&arr.length&&typeof arr[0]==='object'){
+          var flat=arr.map(flatten1);
+          var headers=Object.keys(flat[0]);
+          // union of keys across rows (some rows may omit fields)
+          flat.forEach(function(o){for(var kk in o)if(headers.indexOf(kk)<0)headers.push(kk);});
+          return tableToConfigs(headers,flat,false);
+        }
+      }catch(e){/* fall through to tabular */}
+    }
+    var tab=parseTabular(t);
+    if(!tab) return null;
+    return tableToConfigs(tab.headers,tab.rows, tab.delim===';');
+  }
+
+  /* ---------- score the population ---------- */
+  function score(configs){
+    var srs=[];
+    configs.forEach(function(r){var tp=recoverTwoPoint(r.win_rate,r.profit_factor,r.rpt);
+      if(!tp){r._ok=false;return;}var mm=moments(tp[0],tp[1],r.win_rate);
+      if(!mm){r._ok=false;return;}r._ok=true;r._sr=mm[0]/mm[1];r._sd=mm[1];r._sk=mm[2];r._ku=mm[3];srs.push(r._sr);});
+    var mean=srs.length?srs.reduce(function(a,b){return a+b;},0)/srs.length:0;
+    var varSr=srs.length?srs.reduce(function(a,b){return a+(b-mean)*(b-mean);},0)/srs.length:0;
+    return {varSr:varSr, nScore:srs.length, N:configs.length};
+  }
+  function validate(r,fee,N,varSr){
+    if(!r._ok||r.trades<=1)return{ok:false};
+    var srStar=expMaxSharpe(varSr,N);var dsr=psr(r._sr,srStar,r.trades,r._sk,r._ku);
+    var naive=psr(r._sr,0,r.trades,r._sk,r._ku);var se=r._sd/Math.sqrt(r.trades);
+    var ciLo=r.rpt-1.96*se,ciHi=r.rpt+1.96*se,net=r.rpt-fee,nLo=ciLo-fee,nHi=ciHi-fee;
+    var fOver=dsr>0.95?'PASS':dsr>=0.75?'WARN':'FAIL';
+    var fSamp=ciLo>0?'PASS':(r.rpt>0?'WARN':'FAIL');
+    var fCost=(net>0&&nLo>0)?'PASS':(net>0?'WARN':'FAIL');
+    var verdict;
+    if(fOver==='FAIL'||fCost==='FAIL')verdict='LIKELY OVERFIT / DEAD AFTER COSTS';
+    else if(fOver==='WARN'||fSamp==='WARN'||fCost==='WARN')verdict='FRAGILE';
+    else verdict='SURVIVES SCRUTINY';
+    return{ok:true,sr:r._sr,srStar:srStar,dsr:dsr,naive:naive,ciLo:ciLo,ciHi:ciHi,
+      net:net,nLo:nLo,nHi:nHi,breakeven:r.rpt,fOver:fOver,fSamp:fSamp,fCost:fCost,verdict:verdict};
+  }
+
+  root.MonarchEngine={parseAny:parseAny,score:score,validate:validate,
+    _internal:{cleanNum:cleanNum,mapColumns:mapColumns,parseTabular:parseTabular,tableToConfigs:tableToConfigs}};
+  if(typeof module!=='undefined'&&module.exports) module.exports=root.MonarchEngine;
+})(typeof window!=='undefined'?window:globalThis);
+
+    </script>
+    <script>
+(function(){
+  var E=window.MonarchEngine;
+  var $=function(id){return document.getElementById(id);};
+  function titleCaseVerdict(s){
+    s=String(s).toLowerCase();
+    return s.replace(/\b\w/g,function(c){return c.toUpperCase();})
+            .replace(/\bAfter\b/,'after').replace(/\b&\b/,'&');
+  }
+  var DATA=null; // {mode, configs, N, varSr}
+  var LAST_VERDICT=null;
+  // =====================================================================
+  //  VERDICT_PAGE — where shareable verdict links point.
+  //  Leave blank to use a sibling "monarch_verdict.html" next to this file.
+  //  When deployed, set to e.g. "https://yourdomain.com/verdict"
+  // =====================================================================
+  var VERDICT_PAGE = "";
+  function fp(x){return isFinite(x)?(x*100).toFixed(1)+'%':'\u2014';}
+  function money(x){return (x<0?'-$':'$')+Math.abs(x).toFixed(2);}
+  function light(f){return {PASS:'bg-white',WARN:'bg-neutral-500',FAIL:'bg-neutral-700 border border-neutral-500',INFO:'bg-neutral-900 border border-neutral-700'}[f]||'bg-neutral-900 border border-neutral-800';}
+  function ftxt(f){return {PASS:'text-white',WARN:'text-neutral-300',FAIL:'text-neutral-400',INFO:'text-neutral-400'}[f]||'text-neutral-700';}
+  function status(msg){$('mv-status').textContent=msg||'';}
+
+  function setData(parsed){
+    var s=E.score(parsed.configs);
+    DATA={mode:parsed.mode,configs:parsed.configs,N:s.N,varSr:s.varSr,nScore:s.nScore,single:parsed.mode==='single'};
+    var ranked=parsed.configs.slice().sort(function(a,b){return b.pnl-a.pnl;});
+    if(DATA.single){
+      $('mv-pickwrap').style.display='none';$('mv-scanwrap').style.display='none';$('mv-nwrap').style.display='none';
+    }else{
+      $('mv-pickwrap').style.display='';$('mv-scanwrap').style.display='';$('mv-nwrap').style.display='';
+      $('mv-pick').innerHTML=ranked.slice(0,15).map(function(r){return '<option value="'+r.id+'">'+r.id+' &middot; $'+(+r.pnl).toFixed(0)+' P&L</option>';}).join('');
+      $('mv-pick').onchange=function(e){render(e.target.value);};
+    }
+    $('mv-out').classList.remove('hidden');
+    render(ranked[0].id);
+    setTimeout(function(){var o=$('mv-out');if(o&&o.scrollIntoView)o.scrollIntoView({behavior:'smooth',block:'start'});},160);
+  }
+
+  function render(selId){
+    var fee=0; // cost modeled at zero — verdict reflects the strategy's gross edge
+    var ranked=DATA.configs.slice().sort(function(a,b){return b.pnl-a.pnl;});
+    var sel=DATA.configs.filter(function(r){return String(r.id)===String(selId);})[0]||ranked[0];
+    var v=E.validate(sel,fee,DATA.N,DATA.varSr);
+
+    $('mv-id').textContent=sel.id;
+    $('mv-n').textContent=DATA.N.toLocaleString()+' ('+DATA.nScore.toLocaleString()+' scorable)';
+    $('mv-trd').textContent=sel.trades;
+    $('mv-win').textContent=(sel.win_rate*100).toFixed(1)+'%';
+    $('mv-rpt').textContent=money(sel.rpt);
+
+    if(!v.ok){$('mv-vtext').textContent='NOT SCORABLE';status('This strategy has degenerate stats (no losses, or 0/100% win) and cannot be scored.');return;}
+
+    // verdict (single mode ignores search-overfitting)
+    var verdict=v.verdict;
+    if(DATA.single){ verdict = v.fCost==='FAIL'?'DEAD AFTER COSTS' : (v.fSamp!=='PASS'||v.fCost!=='PASS')?'FRAGILE':'PASSES COSTS & SAMPLE'; }
+    var bl=verdict.indexOf('DEAD')>=0||verdict.indexOf('LIKELY')===0?'border-l-neutral-600':verdict==='FRAGILE'?'border-l-neutral-400':'border-l-white';
+    $('mv-verdict').className='rounded-lg border border-neutral-900 border-l-2 '+bl+' bg-black/40 px-6 py-5 mb-6';
+    $('mv-vtext').textContent=verdict;
+
+    // ----- populate polished hero -----
+    (function(){
+      var realPct = DATA.single ? (isFinite(v.naive)?v.naive*100:0) : (isFinite(v.dsr)?v.dsr*100:0);
+      var naivePct = isFinite(v.naive)?v.naive*100:0;
+      var strong = realPct>=75;
+      $('mv-hero-verdict').textContent = titleCaseVerdict(verdict);
+      $('mv-hero-pct').innerHTML = Math.round(realPct)+'<span class="text-2xl font-normal text-neutral-500">%</span>';
+      $('mv-hero-naive').textContent = Math.round(naivePct)+'%';
+      $('mv-hero-real').textContent = Math.round(realPct)+'%';
+      // ring color dims for weak verdicts
+      var ringCol = strong?'#fff':(realPct>=40?'#8b8b88':'#5a5a58');
+      $('mv-hero-ring').setAttribute('stroke',ringCol);
+      // single mode: no real "search-corrected" bar, label it raw
+      if(DATA.single){
+        $('mv-hero-realwrap').querySelector('span').textContent='Raw significance';
+      }else{
+        $('mv-hero-realwrap').querySelector('span').textContent='Holds up (real)';
+      }
+      // gap copy
+      if(DATA.single){
+        $('mv-hero-gap').innerHTML='Single strategy &mdash; no search to correct for, so this is raw significance. Upload a full sweep to expose the real overfitting gap.';
+      }else{
+        $('mv-hero-gap').innerHTML = strong
+          ? 'The edge largely holds up after the search &mdash; rare. Regime &amp; holdout testing still recommended.'
+          : 'A <span class="text-white">'+Math.max(0,Math.round(naivePct-realPct))+'-point</span> gap between how good it looks and how real it is, once the search is accounted for.';
+      }
+      // chips
+      function chip(id,flag){
+        var label = flag==='PASS'?'Pass':flag==='WARN'?'Watch':flag==='FAIL'?'Fail':flag==='INFO'?'Not scorable solo':flag;
+        $('mv-chip-'+id).textContent=label;
+        var dot=$('mv-chip-'+id+'-dot');
+        dot.className='w-2 h-2 rounded-full '+(/PASS/.test(flag)?'bg-white':/WARN|INFO/.test(flag)?'bg-neutral-500':'bg-neutral-700 border border-neutral-600');
+      }
+      chip('over', DATA.single?'INFO':v.fOver);
+      chip('samp', v.fSamp);
+      chip('cost', v.fCost);
+      // animate bars/ring
+      requestAnimationFrame(function(){requestAnimationFrame(function(){
+        var C=2*Math.PI*52;
+        $('mv-hero-ring').style.strokeDashoffset = C*(1-Math.max(0,Math.min(100,realPct))/100);
+        $('mv-hero-nbar').style.width=naivePct+'%';
+        $('mv-hero-rbar').style.width=Math.max(realPct,1)+'%';
+      });});
+    })();
+
+    // honesty gap
+    if(DATA.single){
+      $('mv-realrow').style.display='none';
+      $('mv-naive-pct').textContent=fp(v.naive);
+      requestAnimationFrame(function(){$('mv-naive-fill').style.width=(isFinite(v.naive)?v.naive*100:0)+'%';});
+      $('mv-chasm').innerHTML='Single strategy &mdash; there is no search to correct for, so this is raw significance. Upload your <span class="text-white">full sweep</span> (many configurations) to reveal the naive-vs-real gap and the true overfitting risk.';
+    }else{
+      $('mv-realrow').style.display='';
+      $('mv-naive-pct').textContent=fp(v.naive);
+      $('mv-real-pct').textContent=fp(v.dsr);
+      requestAnimationFrame(function(){
+        $('mv-naive-fill').style.width=(isFinite(v.naive)?v.naive*100:0)+'%';
+        $('mv-real-fill').style.width=(isFinite(v.dsr)?Math.max(v.dsr*100,0.8):0)+'%';});
+      $('mv-chasm').innerHTML = v.dsr<0.75
+        ? 'That is a <span class="text-white">'+Math.round((v.naive-v.dsr)*100)+'-point</span> gap between how good this looks and how real it is. By pure luck, the best of '+DATA.N.toLocaleString()+' configs would show a Sharpe near <span class="text-white">'+v.srStar.toFixed(2)+'</span> &mdash; this one is only <span class="text-white">'+v.sr.toFixed(2)+'</span>.'
+        : 'The edge largely holds up after the search &mdash; rare, and worth a closer look (regime &amp; holdout still untested).';
+    }
+
+    function chk(title,flag,desc){return '<div class="flex gap-4 items-start px-6 py-4 border-b border-neutral-900 last:border-b-0">'+
+      '<span class="w-2 h-2 rounded-full mt-1.5 flex-none '+light(flag)+'"></span>'+
+      '<div class="flex-1"><div class="flex justify-between items-center"><span class="text-xs text-white font-medium">'+title+'</span>'+
+      '<span class="font-mono text-[10px] tracking-[0.2em] '+ftxt(flag)+'">'+flag+'</span></div>'+
+      '<div class="text-[11px] text-neutral-500 mt-1.5 leading-relaxed">'+desc+'</div></div></div>';}
+    var overCard = DATA.single
+      ? chk('Overfitting &middot; Deflated Sharpe','INFO','Raw significance on this one strategy: <span class="text-white">'+fp(v.naive)+'</span>. Search-overfitting cannot be measured from a single log &mdash; upload your full sweep to deflate it.')
+      : chk('Overfitting &middot; Deflated Sharpe',v.fOver,'Probability this edge is real after the '+DATA.N.toLocaleString()+'-config search: <span class="text-white">'+fp(v.dsr)+'</span>. Naive significance, ignoring the search: <span class="text-white">'+fp(v.naive)+'</span>.');
+    $('mv-checks').innerHTML=overCard+
+      chk('Sample size',v.fSamp,'On <span class="text-white">'+sel.trades+'</span> trades, the 95% range on per-trade edge is <span class="text-white">['+money(v.ciLo)+', '+money(v.ciHi)+']</span> gross.')+
+      chk('Cost survival',v.fCost,'Edge dies above <span class="text-white">'+money(v.breakeven)+'</span> per round-trip. At your <span class="text-white">'+money(fee)+'</span> fee, net edge is <span class="text-white">'+money(v.net)+'</span> &mdash; net 95% range <span class="text-white">['+money(v.nLo)+', '+money(v.nHi)+']</span>.')+
+      '<div class="flex gap-4 items-start px-6 py-4"><span class="w-2 h-2 rounded-full mt-1.5 flex-none bg-neutral-900 border border-neutral-800"></span>'+
+      '<div class="flex-1"><div class="flex justify-between items-center"><span class="text-xs text-white font-medium">Regime robustness</span>'+
+      '<span class="font-mono text-[10px] tracking-[0.2em] text-neutral-700">NEEDS TIMESTAMPS</span></div>'+
+      '<div class="text-[11px] text-neutral-500 mt-1.5 leading-relaxed">Not tested &mdash; needs a per-trade log with timestamps. A strategy can clear every check above and still only work in one market regime.</div></div></div>';
+
+    // ----- "What we'd do next": opinionated, numbers-driven VALIDATION guidance (not trading advice) -----
+    (function(){
+      var g=[]; // each: {tone:'fix'|'watch'|'good', text}
+      // Overfitting / search
+      if(!DATA.single){
+        if(v.fOver==='FAIL'){
+          g.push({tone:'fix', text:'This looks <span class="text-white">overfit</span>. Across '+DATA.N.toLocaleString()+' configs, the best one would show a Sharpe near <span class="text-white">'+v.srStar.toFixed(2)+'</span> by luck alone &mdash; this one is <span class="text-white">'+v.sr.toFixed(2)+'</span>. We&rsquo;d lock an untouched holdout window, then re-run <span class="text-white">only your single best config</span> on it. If the edge survives data it has never seen, you have something.'});
+        } else if(v.fOver==='WARN'){
+          g.push({tone:'watch', text:'Borderline after the search. We&rsquo;d confirm it on a <span class="text-white">purged, embargoed out-of-sample split</span> before trusting the rank &mdash; the gap between naive ('+fp(v.naive)+') and real ('+fp(v.dsr)+') is the part that tends to evaporate live.'});
+        } else {
+          g.push({tone:'good', text:'The edge largely survives the search &mdash; rare. We&rsquo;d still bank it: freeze this config and forward-test it on new data before sizing up.'});
+        }
+      } else {
+        g.push({tone:'watch', text:'This is a single strategy, so we can&rsquo;t measure search-overfitting. If you tuned parameters to get here, upload the <span class="text-white">full sweep</span> &mdash; that&rsquo;s the number that usually changes the verdict.'});
+      }
+      // Sample size
+      if(v.fSamp==='FAIL'){
+        g.push({tone:'fix', text:'<span class="text-white">Too few trades to trust this.</span> On '+sel.trades+' trades the 95% range on per-trade edge still includes zero ['+money(v.ciLo)+', '+money(v.ciHi)+']. We&rsquo;d gather more trades before drawing any conclusion &mdash; the result is currently indistinguishable from noise.'});
+      } else if(v.fSamp==='WARN'){
+        g.push({tone:'watch', text:'Sample is thin. The edge is positive but the confidence interval is wide ['+money(v.ciLo)+', '+money(v.ciHi)+']. We&rsquo;d want more trades before sizing up &mdash; treat current numbers as provisional.'});
+      }
+      // Cost survival
+      if(v.fCost==='FAIL'){
+        g.push({tone:'fix', text:'<span class="text-white">Costs likely kill this.</span> The gross edge is '+money(v.breakeven)+' per round-trip; once realistic fees and slippage come out, net turns negative. We&rsquo;d re-run the log <span class="text-white">priced at your real execution cost</span> &mdash; if it can&rsquo;t clear that bar, the backtest edge isn&rsquo;t tradeable.'});
+      } else if(v.fCost==='WARN'){
+        g.push({tone:'watch', text:'Cost-fragile. The edge clears fees on average but the net downside band dips negative. We&rsquo;d stress it with <span class="text-white">worse-case slippage</span> and confirm it holds in your live fill data.'});
+      }
+      // Always-on process step
+      g.push({tone:'watch', text:'Whatever the verdict: we&rsquo;d test it across <span class="text-white">each year / regime separately</span>. A strategy can pass every check above on aggregate and still only work in one market environment.'});
+
+      var dot={fix:'bg-white',watch:'bg-neutral-500',good:'bg-white'};
+      $('mv-guide-list').innerHTML = g.map(function(item){
+        return '<li class="flex gap-3 items-start"><span class="w-1.5 h-1.5 rounded-full mt-2 flex-none '+dot[item.tone]+'"></span>'+
+          '<span class="text-[12px] text-neutral-300 leading-relaxed">'+item.text+'</span></li>';
+      }).join('');
+    })();
+
+    if(!DATA.single){
+      var top=ranked.slice(0,15),rows='';
+      top.forEach(function(row,idx){var w=E.validate(row,fee,DATA.N,DATA.varSr);if(!w.ok)return;
+        var short=w.verdict.indexOf('LIKELY')===0?'OVERFIT':w.verdict;
+        var vcol=w.verdict.indexOf('LIKELY')===0?'text-neutral-500':w.verdict==='FRAGILE'?'text-neutral-300':'text-white';
+        var dcol=w.dsr<0.75?'text-neutral-500':'text-white';
+        rows+='<tr data-id="'+row.id+'" class="border-b border-neutral-900/60 hover:bg-white/5 cursor-pointer '+(String(row.id)===String(sel.id)?'bg-white/5':'')+'">'+
+          '<td class="text-left py-2 pr-2 text-neutral-600">'+(idx+1)+'</td><td class="text-left py-2 pr-2 text-neutral-300">'+row.id+'</td>'+
+          '<td class="text-right py-2 px-2 text-neutral-400">'+row.trades+'</td><td class="text-right py-2 px-2 text-neutral-400">'+(row.win_rate*100).toFixed(1)+'</td>'+
+          '<td class="text-right py-2 px-2 text-neutral-300">'+(+row.rpt).toFixed(2)+'</td>'+
+          '<td class="text-right py-2 px-2 '+(w.net<0?'text-neutral-600':'text-neutral-200')+'">'+w.net.toFixed(2)+'</td>'+
+          '<td class="text-right py-2 px-2 text-neutral-500">'+(w.naive*100).toFixed(1)+'</td>'+
+          '<td class="text-right py-2 px-2 '+dcol+'">'+(w.dsr*100).toFixed(1)+'</td>'+
+          '<td class="text-right py-2 pl-2 '+vcol+'">'+short+'</td></tr>';});
+      $('mv-scan').innerHTML=rows;
+      Array.prototype.forEach.call(document.querySelectorAll('#mv-scan tr'),function(tr){
+        tr.onclick=function(){render(tr.getAttribute('data-id'));};});
+    }
+
+    // capture the live verdict so the Share button can build a link
+    LAST_VERDICT={
+      verdict:verdict,
+      dsr: DATA.single?(isFinite(v.naive)?v.naive*100:0):(isFinite(v.dsr)?v.dsr*100:0),
+      naive: isFinite(v.naive)?v.naive*100:0,
+      trades: sel.trades,
+      win: sel.win_rate*100,
+      configs: DATA.N,
+      over: DATA.single?'n/a':v.fOver,
+      samp: v.fSamp, cost: v.fCost
+    };
+    resetShareUI();
+  }
+
+  function ingest(parsed,name){
+    if(parsed&&parsed.configs&&parsed.configs.length){
+      status('Read '+name+' \u2014 '+(parsed.mode==='single'?'single strategy':parsed.configs.length.toLocaleString()+' configurations')+'.');
+      $('mv-dropbig').textContent='\u2713 '+name;
+      $('mv-dropsub').textContent='drop another file to re-run';
+      // compute lightweight meta for the animation
+      var ranked0=parsed.configs.slice().sort(function(a,b){return b.pnl-a.pnl;});
+      var top0=ranked0[0];
+      var meta={
+        name:name,
+        trades: top0&&isFinite(top0.trades)?Math.round(top0.trades):60,
+        configs: parsed.configs.length,
+        single: parsed.mode==='single',
+        win: top0&&isFinite(top0.win_rate)?Math.round(top0.win_rate*100):57
+      };
+      if(window.MonarchLab&&window.MonarchLab.runTradeLog){
+        window.MonarchLab.runTradeLog(meta).then(function(){ setData(parsed); });
+      }else{ setData(parsed); }
+    }else{ status('Could not find profit data in '+name+' \u2014 needs a P&L column, return %, entry+exit prices, or sweep summary stats.'); }
+  }
+
+  function handleFile(f){
+    status('Reading '+f.name+'\u2026');
+    var ext=(f.name.split('.').pop()||'').toLowerCase();
+    if(ext==='xlsx'||ext==='xls'){
+      var rb=new FileReader();
+      rb.onload=function(){try{
+        var wb=XLSX.read(new Uint8Array(rb.result),{type:'array'});
+        var csv=XLSX.utils.sheet_to_csv(wb.Sheets[wb.SheetNames[0]]);
+        var p=E.parseAny(csv); ingest(p,f.name);
+      }catch(e){status('Could not read that spreadsheet \u2014 '+e.message);}};
+      rb.onerror=function(){status('Could not read that file.');};
+      rb.readAsArrayBuffer(f);return;
+    }
+    var rd=new FileReader();
+    rd.onload=function(){
+      var p=E.parseAny(rd.result);
+      if(p&&p.configs&&p.configs.length){ ingest(p,f.name); return; }
+      status('Could not find profit data in '+f.name+'. Monrch looks for a P&L column, a return %, or entry+exit prices \u2014 or sweep summary stats (win rate, profit factor, trades). Check the file has at least one of those.');
+    };
+    rd.onerror=function(){status('Could not read that file.');};
+    rd.readAsText(f);
+  }
+
+  var drop=$('mv-drop'),file=$('mv-file');
+  drop.onclick=function(){file.click();};
+  file.onchange=function(e){if(e.target.files[0])handleFile(e.target.files[0]);};
+
+  /* ---------- manual quick entry ---------- */
+  var manToggle=$('mv-manual-toggle');
+  if(manToggle){
+    manToggle.onclick=function(){var p=$('mv-manual');p.classList.toggle('hidden');
+      if(!p.classList.contains('hidden'))p.scrollIntoView({behavior:'smooth',block:'nearest'});};
+  }
+
+  /* ---------- try with sample data ---------- */
+  var sampleBtn=$('mv-sample');
+  if(sampleBtn){
+    sampleBtn.onclick=function(){
+      // generate a realistic crypto scalper log (~520 trades, healthy edge) in-browser
+      var rnd=(function(s){return function(){s|=0;s=s+0x6D2B79F5|0;var t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};})(20);
+      var rows='trade_id,timestamp,symbol,side,qty,entry_price,exit_price,pnl,balance\n';
+      var bal=10000, t=new Date(Date.UTC(2026,1,1));
+      for(var i=1;i<=520;i++){
+        t=new Date(t.getTime()+ (2+Math.floor(rnd()*150))*60000);
+        var entry=+(58000+rnd()*14000).toFixed(2);
+        var side=rnd()<0.5?'long':'short';
+        var win=rnd()<0.57;
+        var qty=+(0.05+rnd()*0.07).toFixed(4);
+        var move=win?(0.0015+rnd()*0.003):-(0.0007+rnd()*0.0019);
+        var fee=entry*qty*0.0004;
+        var pnl=+(entry*qty*move-fee).toFixed(2);
+        var ex=+(entry*(1+(side==='long'?move:-move))).toFixed(2);
+        bal=+(bal+pnl).toFixed(2);
+        var ts=t.toISOString().slice(0,19).replace('T',' ');
+        rows+=i+','+ts+',BTC-USD,'+side+','+qty+','+entry+','+ex+','+pnl+','+bal+'\n';
+      }
+      var parsed=E.parseAny(rows);
+      if(parsed&&parsed.configs&&parsed.configs.length){ ingest(parsed,'sample_trade_log.csv (demo)'); }
+      else { status('Could not generate sample data \u2014 try uploading a file instead.'); }
+    };
+  }
+
+  var manGo=$('man-go');
+  if(manGo){
+    manGo.onclick=function(){
+      function val(id){var x=parseFloat($(id).value);return isFinite(x)?x:NaN;}
+      var trd=Math.round(val('man-trades')), wr=val('man-win'), aw=val('man-aw'), al=Math.abs(val('man-al'));
+      var cfgs=Math.max(1,Math.round(val('man-configs'))||1);
+      var msg=$('man-msg');
+      if(!(trd>1)){msg.textContent='Enter the number of trades (2 or more).';return;}
+      if(!(wr>0&&wr<100)){msg.textContent='Win rate should be between 0 and 100.';return;}
+      if(!(aw>0)){msg.textContent='Average win should be a positive number.';return;}
+      if(!(al>0)){msg.textContent='Average loss should be a positive number.';return;}
+      wr=wr/100;
+      var rpt=wr*aw-(1-wr)*al;
+      var pf=(wr*aw)/((1-wr)*al);
+      // build a synthetic CSV of `cfgs` identical configs so the search-deflation
+      // reflects how many configurations the user actually tried.
+      var rows='id,trades,win_rate,profit_factor,avg_pnl\n';
+      for(var i=1;i<=Math.min(cfgs,2000);i++) rows+=i+','+trd+','+(wr).toFixed(6)+','+pf.toFixed(6)+','+rpt.toFixed(6)+'\n';
+      var p=E.parseAny(rows);
+      if(p&&p.configs&&p.configs.length){
+        msg.textContent='';
+        ingest(p, cfgs>1?('manual entry ('+cfgs+' configs)'):'manual entry');
+      }else{ msg.textContent='Could not validate those numbers \u2014 double-check them.'; }
+    };
+  }
+
+  ['dragover','dragenter'].forEach(function(ev){drop.addEventListener(ev,function(e){e.preventDefault();drop.classList.add('border-white');});});
+  ['dragleave','drop'].forEach(function(ev){drop.addEventListener(ev,function(e){e.preventDefault();drop.classList.remove('border-white');});});
+  drop.addEventListener('drop',function(e){if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0]);});
+  /* fee controls removed — cost modeled at $0 (gross edge) */
+
+  /* ---------- share verdict ---------- */
+  function verdictURL(){
+    if(!LAST_VERDICT)return '';
+    // same-page verdict view: strip any existing query, append params
+    var base=VERDICT_PAGE || (location.origin+location.pathname);
+    var v=LAST_VERDICT;
+    var q='?dsr='+Math.round(v.dsr)+'&naive='+Math.round(v.naive)+
+          '&trades='+v.trades+'&win='+v.win.toFixed(1)+'&configs='+v.configs+
+          '&verdict='+encodeURIComponent(titleCase(v.verdict))+
+          '&over='+flag(v.over)+'&samp='+flag(v.samp)+'&cost='+flag(v.cost);
+    return base+q;
+  }
+  function flag(f){return {PASS:'Pass',WARN:'Watch',FAIL:'Fail'}[f]||(f==='n/a'?'n/a':f);}
+  function titleCase(s){s=String(s).toLowerCase();return s.charAt(0).toUpperCase()+s.slice(1);}
+  function embedCode(url){
+    return '<a href="'+url+'" style="display:inline-flex;align-items:center;gap:6px;font:600 11px/1 system-ui;text-decoration:none;color:#fff;background:#000;border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 12px">'+
+      '<svg viewBox="0 0 64 64" width="15" height="15" fill="none" stroke="#fff" stroke-width="4" style="vertical-align:middle"><circle cx="32" cy="32" r="25"/><path d="M21 40 V25 L32 33 L43 25 V40" stroke-width="4" stroke-linejoin="round"/></svg>Monrch-validated &middot; DSR '+Math.round(LAST_VERDICT.dsr)+'%</a>';
+  }
+  function copy(text,cb){
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(cb).catch(function(){fallbackCopy(text);cb();});
+    }else{fallbackCopy(text);cb();}
+  }
+  function fallbackCopy(text){var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}
+  function flash(el,msg){var old=el.textContent;el.textContent=msg;setTimeout(function(){el.textContent=old;},1600);}
+  function resetShareUI(){
+    var ex=$('mv-share-extra'); if(ex)ex.classList.add('hidden');
+    var lbl=$('mv-share-lbl'); if(lbl)lbl.textContent='Copy link';
+    var sm=$('mv-hero-sharemsg'); if(sm)sm.textContent='';
+    var d=$('mv-detail'); if(d)d.classList.add('hidden');
+    var dt=$('mv-detail-toggle'); if(dt)dt.innerHTML='See the full breakdown &darr;';
+  }
+  var shareBtn=$('mv-share');
+  if(shareBtn){
+    shareBtn.onclick=function(){
+      var url=verdictURL(); if(!url)return;
+      copy(url,function(){flash($('mv-share-lbl'),'Link copied');});
+      $('mv-embed').textContent=embedCode(url);
+      $('mv-open').href=url;
+      $('mv-share-extra').classList.remove('hidden');
+    };
+    $('mv-embed-copy').onclick=function(){var url=verdictURL();copy(embedCode(url),function(){flash($('mv-embed-copy'),'Copied');});};
+  }
+
+  // hero share button: copy link + reveal the embed/detail share row below
+  var heroShare=$('mv-hero-share');
+  if(heroShare){
+    heroShare.onclick=function(){
+      var url=verdictURL(); if(!url)return;
+      copy(url,function(){flash($('mv-hero-sharemsg'),'Link copied to clipboard');});
+      if($('mv-embed'))$('mv-embed').textContent=embedCode(url);
+      if($('mv-open'))$('mv-open').href=url;
+      var ex=$('mv-share-extra'); if(ex){ex.classList.remove('hidden');}
+    };
+  }
+  // detail toggle: reveal the full technical breakdown
+  var detailToggle=$('mv-detail-toggle');
+  if(detailToggle){
+    detailToggle.onclick=function(){
+      var d=$('mv-detail');
+      if(d.classList.contains('hidden')){d.classList.remove('hidden');detailToggle.innerHTML='Hide the full breakdown &uarr;';d.scrollIntoView({behavior:'smooth',block:'start'});}
+      else{d.classList.add('hidden');detailToggle.innerHTML='See the full breakdown &darr;';}
+    };
+  }
+
+  if(window.lucide)lucide.createIcons();
+})();
+</script>
+
+    <script>
+(function(){
+  var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  /* ---- smooth scroll (Lenis) with graceful fallback ---- */
+  var lenis=null;
+  try{
+    if(window.Lenis && !rm){
+      lenis=new Lenis({lerp:0.09, wheelMultiplier:1, smoothWheel:true, touchMultiplier:1.6});
+      window.__lenis=lenis;
+      document.documentElement.classList.add('lenis');
+      function raf(t){lenis.raf(t);requestAnimationFrame(raf);} requestAnimationFrame(raf);
+      lenis.on('scroll',function(e){onScroll(e.animatedScroll!=null?e.animatedScroll:(window.scrollY||0));});
+    }
+  }catch(e){lenis=null;}
+
+  window.smoothTo=function(id){var el=document.getElementById(id); if(!el)return;
+    if(lenis){lenis.scrollTo(el,{offset:-8,duration:1.15});}
+    else{el.scrollIntoView({behavior:'smooth',block:'start'});}};
+  // intercept in-page anchor links for smooth jumps
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click',function(ev){var id=a.getAttribute('href').slice(1);
+      if(id && document.getElementById(id)){ev.preventDefault();window.smoothTo(id);}});});
+
+  /* ---- progress bar ---- */
+  var bar=document.createElement('div'); bar.id='scrollbar'; document.body.appendChild(bar);
+
+  /* ---- scroll-linked: parallax, hero fade, gauntlet draw ---- */
+  var px=[].slice.call(document.querySelectorAll('[data-parallax]'));
+  var heroInner=document.getElementById('hero-inner');
+  var hero=document.getElementById('hero');
+  var rail=document.getElementById('gauntlet-rail'), fill=document.getElementById('gauntlet-fill');
+  var gnodes=[].slice.call(document.querySelectorAll('#method .gnode'));
+  var hsecs=[].slice.call(document.querySelectorAll('.hsec'));
+  var stmt=document.getElementById('statement'), sws=[].slice.call(document.querySelectorAll('#statement .sw'));
+  if(rm){ hsecs.forEach(function(s){s.classList.add('norm');}); sws.forEach(function(s){s.classList.add('lit');}); }
+  var vh=window.innerHeight;
+  window.addEventListener('resize',function(){vh=window.innerHeight;});
+
+  function onScroll(y){
+    y = (y!=null)?y:(window.scrollY||window.pageYOffset||0);
+    var h=document.documentElement.scrollHeight-vh;
+    bar.style.width=(h>0?Math.min(y/h*100,100):0)+'%';
+    if(rm) return;
+    // parallax
+    for(var i=0;i<px.length;i++){var el=px[i];var s=parseFloat(el.dataset.parallax)||0.12;
+      var r=el.getBoundingClientRect();var c=(r.top+r.height/2)-vh/2;
+      el.style.transform='translate3d(0,'+(-c*s).toFixed(1)+'px,0)';}
+    // hero cinematic exit
+    if(hero&&heroInner){var p=Math.min(y/(vh*0.85),1);
+      heroInner.style.transform='translate3d(0,'+(y*0.22).toFixed(1)+'px,0)';
+      heroInner.style.opacity=String(1-p*0.95);}
+    // gauntlet self-draw + node activation
+    if(rail&&fill){var rr=rail.getBoundingClientRect();var passed=Math.min(Math.max(vh*0.55-rr.top,0),rr.height);
+      fill.style.height=passed+'px';
+      for(var n=0;n<gnodes.length;n++){var nr=gnodes[n].getBoundingClientRect();
+        gnodes[n].classList.toggle('on', nr.top < vh*0.55);}}
+    // horizontal pinned gallery
+    for(var hi=0;hi<hsecs.length;hi++){var hs=hsecs[hi];if(hs.classList.contains('norm'))continue;
+      var ht=hs.querySelector('.htrack');if(!ht)continue;
+      var gr=hs.getBoundingClientRect();var tot=hs.offsetHeight-vh;
+      var pr=Math.min(Math.max(-gr.top/(tot||1),0),1);var mx=Math.max(ht.scrollWidth-window.innerWidth+window.innerWidth*0.08,0);
+      ht.style.transform='translate3d('+(-pr*mx).toFixed(1)+'px,0,0)';}
+    // statement word-by-word reveal
+    if(stmt&&sws.length){var sr=stmt.getBoundingClientRect();var sp=Math.min(Math.max((vh*0.78-sr.top)/(sr.height*0.55),0),1);
+      var lit=Math.floor(sp*sws.length);for(var k=0;k<sws.length;k++)sws[k].classList.toggle('lit',k<lit);}
+  }
+  var ticking=false;
+  window.addEventListener('scroll',function(){if(!ticking){requestAnimationFrame(function(){onScroll();ticking=false;});ticking=true;}},{passive:true});
+  onScroll(0);
+
+  /* ---- reveals / counters / bars ---- */
+  document.querySelectorAll('.stagger').forEach(function(p){
+    Array.prototype.forEach.call(p.children,function(c,i){ if(c.hasAttribute('data-reveal')) c.style.setProperty('--rd',(i*90)+'ms'); });
+  });
+  function animCount(el){
+    var raw=el.dataset.count||'0', to=parseFloat(raw)||0, dec=(raw.indexOf('.')>=0)?1:0;
+    var comma=el.dataset.comma==='1', pre=el.dataset.prefix||'', suf=el.dataset.suffix||'';
+    var t0=performance.now(), dur=1300;
+    function step(t){var p=Math.min((t-t0)/dur,1),e=1-Math.pow(1-p,3),v=to*e;
+      el.textContent=pre+(comma?Math.round(v).toLocaleString():v.toFixed(dec))+suf; if(p<1)requestAnimationFrame(step);}
+    requestAnimationFrame(step);
+  }
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){
+    if(!e.isIntersecting)return; var el=e.target;
+    if(el.hasAttribute('data-reveal'))el.classList.add('in');
+    if(el.classList.contains('count')&&!el._d){el._d=1; if(rm){el.textContent=(el.dataset.prefix||'')+el.dataset.count+(el.dataset.suffix||'');}else{animCount(el);}}
+    if(el.classList.contains('reveal-bar')&&!el._d){el._d=1; var w=el.dataset.w; setTimeout(function(){el.style.width=w+'%';},rm?0:160);}
+    io.unobserve(el);
+  });},{threshold:.16,rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('[data-reveal],.count,.reveal-bar').forEach(function(el){
+    if(el.classList.contains('reveal-bar')){el.style.width='0%';el.style.transition='width 1.1s cubic-bezier(.16,.7,.2,1)';}
+    io.observe(el);
+  });
+})();
+</script>
+    <script>
+(function(){
+  // ============================================================
+  //  Set this to your deployed backend URL to enable the AI review.
+  //  Leave "" to use the transparent in-browser heuristic instead.
+  //  e.g. var MONARCH_API = "https://monarch-api.onrender.com";
+  // ============================================================
+  var MONARCH_API = "";
+
+  function L(){return window.__lenis;}
+  function lock(){try{var l=L();if(l&&l.stop)l.stop();}catch(e){}document.body.style.overflow='hidden';}
+  function unlock(){try{var l=L();if(l&&l.start)l.start();}catch(e){}document.body.style.overflow='';document.documentElement.style.overflow='';}
+  function icons(){try{if(window.lucide)lucide.createIcons();}catch(e){}}
+  var OVS=['ov-choose','ov-english','ov-tradelog'];
+  function hideAll(){OVS.forEach(function(id){var e=document.getElementById(id);if(e)e.classList.remove('show');});}
+
+  window.openChooser=function(){hideAll();var e=document.getElementById('ov-choose');if(e)e.classList.add('show');lock();icons();};
+  window.closeOverlays=function(){hideAll();unlock();};
+  window.openView=function(which){hideAll();
+    if(which==='english'){var e=document.getElementById('ov-english');if(e)e.classList.add('show');seReset();}
+    else{var t=document.getElementById('ov-tradelog');if(t)t.classList.add('show');}
+    lock();icons();};
+  document.addEventListener('keydown',function(ev){if(ev.key==='Escape'){var any=OVS.some(function(id){var e=document.getElementById(id);return e&&e.classList.contains('show');});if(any)window.closeOverlays();}});
+
+  // ---------- English validator ----------
+  var input=document.getElementById('se-input'), cnt=document.getElementById('se-count');
+  if(input&&cnt){input.addEventListener('input',function(){var w=input.value.trim().split(/\s+/).filter(Boolean).length;cnt.textContent=w+' word'+(w===1?'':'s');});}
+
+  // verdict tiers (financial wording)
+  var TIERS=[[85,'Strongly Allocate'],[70,'Allocate'],[50,'Worth Testing'],[30,'Weak Edge'],[0,'Do Not Trade']];
+  function tierFor(s){for(var i=0;i<TIERS.length;i++){if(s>=TIERS[i][0])return TIERS[i][1];}return 'Do Not Trade';}
+  function summaryFor(s){
+    if(s>=85)return 'This reads like a disciplined, well-reasoned edge. The thinking is sound \u2014 now confirm it on real, unseen trades.';
+    if(s>=70)return 'A credible idea with real structure. A few gaps remain before you put meaningful capital behind it.';
+    if(s>=50)return 'There is something here, but key pieces \u2014 costs, sample, or robustness \u2014 are thin. Worth a careful test, not a live allocation.';
+    if(s>=30)return 'The edge is thin or under-specified. Treat this as a hypothesis to harden, not a strategy to fund.';
+    return 'As described, this is unlikely to survive contact with real markets. Rethink the core rationale before going further.';
+  }
+
+  // transparent in-browser heuristic (mirrors the backend fallback)
+  // crude but effective check: is this actually a strategy description, or noise?
+  function looksLikeStrategy(t){
+    var s=t.trim();
+    var words=s.split(/\s+/).filter(Boolean);
+    if(words.length<12) return {ok:false, reason:'too_short'};
+    // ratio of real dictionary-ish words: must contain vowels, reasonable length
+    var realish=words.filter(function(w){
+      var x=w.toLowerCase().replace(/[^a-z]/g,'');
+      return x.length>=2 && x.length<=18 && /[aeiou]/.test(x);
+    });
+    if(realish.length/words.length < 0.55) return {ok:false, reason:'gibberish'};
+    // must touch at least a couple of trading/finance concepts to be scorable
+    var domain=['buy','sell','long','short','entry','exit','signal','trade','price','market','strategy','stop','position','trend','revert','momentum','funding','spread','arb','volatility','breakout','moving average','rsi','macd','indicator','backtest','sharpe','return','profit','risk','hedge','portfolio','asset','stock','crypto','forex','option','future','perp','bar','candle','timeframe','threshold','cross','overbought','oversold','order','fill','bps','fee','slippage','allocation','rebalance','factor','alpha','beta','carry','open','close','high','low','volume'];
+    var hits=0; var ls=s.toLowerCase();
+    for(var i=0;i<domain.length;i++){ if(ls.indexOf(domain[i])>=0){hits++; if(hits>=2)break;} }
+    if(hits<2) return {ok:false, reason:'not_a_strategy'};
+    return {ok:true};
+  }
+
+  function heuristic(t){
+    var s=t.toLowerCase();
+    function has(){for(var i=0;i<arguments.length;i++){if(s.indexOf(arguments[i])>=0)return true;}return false;}
+    var d1=6; if(has('because','funding','carry','mean revert','momentum','liquidity','order flow','microstructure','arb','spread','inefficien'))d1+=8; if(has('why','rationale','edge','hypothesis'))d1+=4; d1=Math.min(d1,20);
+    var m=s.match(/([0-9][0-9,\.]{1,9})\s*(trades|samples|signals|fills)/); var n=m?parseFloat(m[1].replace(/,/g,'')):0;
+    var d2=4; if(n>=2000)d2=20;else if(n>=500)d2=15;else if(n>=200)d2=11;else if(n>=50)d2=7;else if(n>0)d2=5; if(has('years','months')&&d2<11)d2+=3; d2=Math.min(d2,20);
+    var d3=4; if(has('fee','fees','commission','slippage','spread','bps','basis point','taker','maker','funding cost','round-trip','round trip'))d3+=12; if(has('net of','after cost','after fee'))d3+=4; d3=Math.min(d3,20);
+    var d4=5; if(has('out of sample','out-of-sample','holdout','hold-out','walk forward','walk-forward','cross valid','oos','unseen'))d4+=9; if(has('single rule','one rule','not optimized','few parameters','no optimization'))d4+=4; if(has('optimi','grid search','swept','sweep','tuned','best parameter'))d4-=4; d4=Math.max(0,Math.min(d4,20));
+    var d5=4; if(has('stop','exit','take profit','trailing','time stop','position siz','risk per'))d5+=10; if(has('drawdown','max loss','risk limit'))d5+=4; d5=Math.min(d5,20);
+    var dims=[
+      {name:'Economic rationale',score:d1,note:d1>=14?'A clear reason the edge should exist.':'Unclear why this should work beyond fitting the past.'},
+      {name:'Sample size',score:d2,note:n?(n.toLocaleString()+' trades referenced.'):'No trade count given \u2014 sample adequacy unknown.'},
+      {name:'Cost realism',score:d3,note:d3>=14?'Costs are explicitly accounted for.':'Fees, slippage and spread not addressed \u2014 most edges die here.'},
+      {name:'Overfitting control',score:d4,note:d4>=13?'Some defense against curve-fitting.':'No out-of-sample or robustness defense mentioned.'},
+      {name:'Risk & exits',score:d5,note:d5>=13?'Exits and risk limits are defined.':'Exit and risk rules are vague \u2014 needed before any capital.'}
+    ];
+    var total=dims.reduce(function(a,d){return a+d.score;},0);
+    var flags=[];
+    if(d3<14)flags.push('Costs not modeled \u2014 re-test net of realistic fees and slippage.');
+    if(d4<13)flags.push('No out-of-sample test \u2014 results may be curve-fit to history.');
+    if(d2<11)flags.push('Thin sample \u2014 too few trades to trust the statistics.');
+    if(d5<13)flags.push('Exits/risk undefined \u2014 set stops and sizing before trading.');
+    if(d1<14)flags.push('Weak rationale \u2014 clarify why the edge should persist.');
+    if(!flags.length)flags.push('No glaring gaps \u2014 now prove it on unseen data.');
+    var tests=['Run a purged, embargoed out-of-sample split.','Re-price every trade at your real round-trip cost.','Stress the sample \u2014 does the edge hold in each year?','Apply a deflated-Sharpe haircut for the variants you tried.'];
+    return {score:total,tier:tierFor(total),summary:summaryFor(total),dimensions:dims,redFlags:flags,whatToTest:tests,mode:'heuristic'};
+  }
+
+  window.seAnalyze=function(){
+    var err=document.getElementById('se-err');
+    var txt=(input&&input.value||'').trim();
+    if(txt.split(/\s+/).filter(Boolean).length<12){if(err)err.textContent='Give me a little more \u2014 a sentence or two on the signal, entries, exits and costs.';return;}
+    var chk=looksLikeStrategy(txt);
+    if(!chk.ok){
+      if(err){
+        if(chk.reason==='gibberish') err.textContent="That doesn't read as a strategy description \u2014 try describing your signal, entries, exits and costs in plain English.";
+        else if(chk.reason==='not_a_strategy') err.textContent="I can't find a trading strategy in there. Describe what triggers a trade, when you exit, and roughly how often \u2014 e.g. \u201cbuy when RSI < 30, exit at the prior close, ~300 trades, net of fees.\u201d";
+        else err.textContent='Give me a little more detail on the actual strategy.';
+      }
+      return;
+    }
+    if(err)err.textContent='';
+    var btn=document.getElementById('se-go'); if(btn){btn.disabled=true;btn.textContent='Analyzing\u2026';}
+    function reveal(data){if(btn){btn.disabled=false;btn.textContent='Analyze';} if(!data||typeof data.score!=='number')data=heuristic(txt); data.tier=data.tierLabel||data.tier||tierFor(data.score); if(!data.summary)data.summary=summaryFor(data.score); renderScore(data);}
+    function done(data){
+      if(window.MonarchLab&&window.MonarchLab.runPlainEnglish){
+        window.MonarchLab.runPlainEnglish().then(function(){reveal(data);});
+      }else{ reveal(data); }
+    }
+    if(MONARCH_API){
+      fetch(MONARCH_API.replace(/\/+$/,'')+'/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({strategy:txt})})
+        .then(function(r){return r.json();}).then(done).catch(function(){done(heuristic(txt));});
+    } else { setTimeout(function(){done(heuristic(txt));},300); }
+  };
+
+  // ---------- horizontal score page ----------
+  var frame=0;
+  function setFrame(i){frame=Math.max(0,Math.min(2,i));
+    var tr=document.getElementById('se-track'); if(tr)tr.style.transform='translateX(-'+(frame*33.3333)+'%)';
+    var dots=document.querySelectorAll('#ov-english .se-dot'); for(var k=0;k<dots.length;k++)dots[k].classList.toggle('on',k===frame);
+    var hint=document.getElementById('se-scroll-hint'); if(hint)hint.style.opacity=(frame>=2?'0':'1');}
+  window.seFrame=function(i){setFrame(i);};
+  window.seReset=function(){
+    var inS=document.getElementById('se-input-stage'), reS=document.getElementById('se-result');
+    if(reS)reS.classList.add('hidden'); if(inS)inS.classList.remove('hidden'); setFrame(0);
+    var ring=document.getElementById('se-ring'); if(ring)ring.style.strokeDashoffset='603';
+    var sc=document.getElementById('se-score'); if(sc)sc.textContent='0';
+    var ta=document.getElementById('se-input'); if(ta)ta.value='';
+    var cnt=document.getElementById('se-count'); if(cnt)cnt.textContent='0 words';
+    var err=document.getElementById('se-err'); if(err)err.textContent='';
+  };
+  function esc(s){return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+  function renderScore(d){
+    var inS=document.getElementById('se-input-stage'), reS=document.getElementById('se-result');
+    if(inS)inS.classList.add('hidden'); if(reS)reS.classList.remove('hidden'); setFrame(0);
+    var score=Math.max(0,Math.min(100,Math.round(d.score)));
+    var ring=document.getElementById('se-ring'); var off=603*(1-score/100);
+    if(ring){ring.style.strokeDashoffset='603'; setTimeout(function(){ring.style.strokeDashoffset=String(off.toFixed(1));},90);}
+    var sc=document.getElementById('se-score'); var cur=0;
+    if(sc){sc.textContent='0'; var step=Math.max(1,Math.round(score/40)); var iv=setInterval(function(){cur+=step; if(cur>=score){cur=score;clearInterval(iv);} sc.textContent=cur;},26);}
+    var tier=document.getElementById('se-tier'); if(tier)tier.textContent=d.tier;
+    var sum=document.getElementById('se-summary'); if(sum)sum.textContent=d.summary;
+    var dimsEl=document.getElementById('se-dims');
+    if(dimsEl){dimsEl.innerHTML=(d.dimensions||[]).map(function(x){var pct=Math.round((x.score/20)*100);
+      return '<div><div class="flex justify-between items-baseline mb-1.5"><span class="text-sm font-light text-white">'+esc(x.name)+'</span><span class="text-[10px] font-mono text-neutral-500">'+x.score+'/20</span></div>'
+        +'<div class="h-1.5 bg-neutral-900 rounded overflow-hidden mb-1.5"><div class="h-full bg-white" style="width:0;transition:width 1s cubic-bezier(.16,.7,.2,1)" data-w="'+pct+'"></div></div>'
+        +'<div class="text-[11px] text-neutral-500 font-light">'+esc(x.note||'')+'</div></div>';}).join('');
+      setTimeout(function(){var bars=dimsEl.querySelectorAll('[data-w]');for(var i=0;i<bars.length;i++){bars[i].style.width=bars[i].getAttribute('data-w')+'%';}},140);}
+    var fl=document.getElementById('se-flags');
+    if(fl)fl.innerHTML=(d.redFlags||[]).map(function(f){return '<div class="flex gap-2.5 text-[13px] text-neutral-300 font-light"><span class="text-neutral-600 mt-px">&mdash;</span><span>'+esc(f)+'</span></div>';}).join('');
+    var te=document.getElementById('se-tests');
+    if(te)te.innerHTML=(d.whatToTest||[]).map(function(f){return '<div class="flex gap-2.5 text-[13px] text-neutral-300 font-light"><span class="text-white mt-px">&rarr;</span><span>'+esc(f)+'</span></div>';}).join('');
+    icons();
+  }
+
+  // regular scroll -> horizontal frame navigation (one gesture = one frame)
+  var reS=document.getElementById('se-result');
+  if(reS){
+    var acc=0, busy=false, decay=null;
+    reS.addEventListener('wheel',function(ev){ev.preventDefault();
+      if(busy){acc=0;return;}                       // during cooldown, swallow everything
+      var dom=Math.abs(ev.deltaY)>=Math.abs(ev.deltaX)?ev.deltaY:ev.deltaX;
+      acc+=dom;
+      // let the accumulator decay so a slow nudge doesn't carry over into the next gesture
+      if(decay)clearTimeout(decay);
+      decay=setTimeout(function(){acc=0;},140);
+      if(acc>90){setFrame(frame+1);acc=0;busy=true;setTimeout(function(){busy=false;},650);}
+      else if(acc<-90){setFrame(frame-1);acc=0;busy=true;setTimeout(function(){busy=false;},650);}
+    },{passive:false});
+    var tx=0, tbusy=false;
+    reS.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;},{passive:true});
+    reS.addEventListener('touchend',function(e){if(tbusy)return;var dx=e.changedTouches[0].clientX-tx;
+      if(dx<-45){setFrame(frame+1);tbusy=true;setTimeout(function(){tbusy=false;},650);}
+      else if(dx>45){setFrame(frame-1);tbusy=true;setTimeout(function(){tbusy=false;},650);}},{passive:true});
+  }
+  document.addEventListener('keydown',function(ev){
+    var on=document.getElementById('ov-english'); if(!on||!on.classList.contains('show'))return;
+    var res=document.getElementById('se-result'); if(!res||res.classList.contains('hidden'))return;
+    if(ev.key==='ArrowRight')setFrame(frame+1); else if(ev.key==='ArrowLeft')setFrame(frame-1);
+  });
+  icons();
+})();
+</script>
+    <script>
+(function(){
+  // =====================================================================
+  //  EMAIL CAPTURE  —  EmailJS
+  // =====================================================================
+  var email=document.getElementById('ea-email'), go=document.getElementById('ea-go'), msg=document.getElementById('ea-msg');
+  if(!go) return;
+  function valid(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
+  function say(t,ok){ if(msg){ msg.textContent=t; msg.style.color=ok?"#ffffff":"#8f8f8f"; } }
+  function submit(){
+    var v=(email&&email.value||"").trim();
+    if(!valid(v)){ say("Enter a valid email address.",false); return; }
+    go.disabled=true; var old=go.textContent; go.textContent="Sending\u2026";
+    emailjs.send("service_bql0hku","template_rvet828",{user_email:v,user_name:""})
+      .then(function(){
+        if(email)email.value="";
+        say("You're on the list. We'll be in touch.",true);
+        console.log("EmailJS: sent to "+v);
+        go.disabled=false; go.textContent=old;
+      })
+      .catch(function(err){
+        console.warn("EmailJS error:",err);
+        say("Something went wrong — please try again.",false);
+        go.disabled=false; go.textContent=old;
+      });
+  }
+  go.addEventListener("click",submit);
+  if(email)email.addEventListener("keydown",function(e){ if(e.key==="Enter"){ e.preventDefault(); submit(); } });
+})();
+</script>
+<!-- ===================== ANALYSIS ANIMATION OVERLAY ===================== -->
+<div id="mlab" class="fixed inset-0 z-[100] hidden items-center justify-center" style="background:rgba(3,3,4,.92);backdrop-filter:blur(10px)">
+  <div class="w-full max-w-lg px-8 text-center">
+    <!-- the visual stage -->
+    <div class="relative mx-auto mb-10" style="width:260px;height:260px">
+      <svg id="mlab-svg" viewBox="0 0 260 260" class="w-full h-full">
+        <!-- outer rotating ticks -->
+        <g id="mlab-ticks" opacity="0.5"></g>
+        <!-- scatter of trades (drawn by JS) -->
+        <g id="mlab-scatter"></g>
+        <!-- distribution curve (drawn by JS) -->
+        <path id="mlab-curve" fill="none" stroke="#fff" stroke-width="1.5" opacity="0"/>
+        <path id="mlab-curve-fill" fill="rgba(255,255,255,0.06)" opacity="0"/>
+        <!-- progress ring -->
+        <circle cx="130" cy="130" r="120" fill="none" stroke="#161618" stroke-width="2"/>
+        <circle id="mlab-ring" cx="130" cy="130" r="120" fill="none" stroke="#fff" stroke-width="2"
+          stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset .5s ease"
+          stroke-dasharray="753.98" stroke-dashoffset="753.98"/>
+        <!-- center readout -->
+        <text id="mlab-num" x="130" y="128" text-anchor="middle" fill="#fff" style="font:700 34px 'Space Mono',monospace">0</text>
+        <text id="mlab-numlabel" x="130" y="150" text-anchor="middle" fill="#8b8b88" style="font:400 9px 'Space Mono',monospace;letter-spacing:2px">SCANNING</text>
+      </svg>
+    </div>
+    <!-- stage label -->
+    <div id="mlab-stage" class="text-lg font-light text-white tracking-tight mb-2" style="min-height:28px">Reading your file</div>
+    <div id="mlab-sub" class="text-[10px] font-mono tracking-[0.25em] uppercase text-neutral-500" style="min-height:14px">&mdash;</div>
+    <!-- step pips -->
+    <div id="mlab-pips" class="flex items-center justify-center gap-2 mt-8"></div>
+  </div>
+</div>
+
+<script>
+/* ===================== ANALYSIS ANIMATION ENGINE ===================== */
+window.MonarchLab=(function(){
+  function $(id){return document.getElementById(id);}
+  var R=120, C=2*Math.PI*R;
+  // build outer ticks once
+  (function(){
+    var g=$('mlab-ticks'),s='';
+    for(var i=0;i<60;i++){var a=i/60*Math.PI*2,x1=130+Math.cos(a)*128,y1=130+Math.sin(a)*128,x2=130+Math.cos(a)*(i%5===0?118:123),y2=130+Math.sin(a)*(i%5===0?118:123);
+      s+='<line x1="'+x1.toFixed(1)+'" y1="'+y1.toFixed(1)+'" x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'" stroke="#2a2a2c" stroke-width="1"/>';}
+    if(g)g.innerHTML=s;
+  })();
+
+  function setRing(p){ $('mlab-ring').style.strokeDashoffset = C*(1-p); }
+  function num(v,label){ $('mlab-num').textContent=v; if(label)$('mlab-numlabel').textContent=label; }
+  function stage(title,sub){ $('mlab-stage').textContent=title; if(sub!==undefined)$('mlab-sub').textContent=sub; }
+
+  // scatter dots representing trades
+  var scatterTimers=[];
+  function drawScatter(n,seed){
+    var g=$('mlab-scatter');if(!g)return;
+    scatterTimers.forEach(clearTimeout); scatterTimers=[];
+    var rnd=mulberry(seed||7);
+    n=Math.min(n,80);
+    var s='';
+    var radii=[];
+    for(var i=0;i<n;i++){
+      var ang=rnd()*Math.PI*2, rad=30+rnd()*78;
+      var x=130+Math.cos(ang)*rad, y=130+Math.sin(ang)*rad;
+      var win=rnd()<0.57;
+      var rr=(1.4+rnd()*1.6); radii.push(rr);
+      // start at r=0, transition r up via attribute change (no SMIL)
+      s+='<circle id="msd'+i+'" cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="0" fill="'+(win?'#fff':'#3a3a3c')+'" opacity="0.9" style="transition:r .45s cubic-bezier(.16,.7,.2,1)"/>';
+    }
+    g.innerHTML=s;
+    // stagger the reveal with timers (cheap, non-blocking)
+    for(var j=0;j<n;j++){
+      (function(idx){
+        var t=setTimeout(function(){
+          var el=document.getElementById('msd'+idx);
+          if(el)el.setAttribute('r',radii[idx].toFixed(1));
+        }, 60 + idx*9);
+        scatterTimers.push(t);
+      })(j);
+    }
+  }
+  function clearScatter(){scatterTimers.forEach(clearTimeout);scatterTimers=[];var g=$('mlab-scatter');if(g)g.innerHTML='';}
+
+  // bell curve path
+  function drawCurve(){
+    var pts=[],fill=[];
+    for(var i=0;i<=80;i++){
+      var x=40+i*(180/80);
+      var t=(i-40)/16;
+      var y=130 - 70*Math.exp(-t*t/2);
+      pts.push((i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1));
+    }
+    var d=pts.join(' ');
+    $('mlab-curve').setAttribute('d',d);
+    $('mlab-curve-fill').setAttribute('d',d+' L220 130 L40 130 Z');
+    $('mlab-curve').style.transition='opacity .5s ease';$('mlab-curve-fill').style.transition='opacity .5s ease';
+    $('mlab-curve').style.opacity='1';$('mlab-curve-fill').style.opacity='1';
+  }
+  function hideCurve(){$('mlab-curve').style.opacity='0';$('mlab-curve-fill').style.opacity='0';}
+
+  function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  function tick(from,to,ms,fmt){return new Promise(function(res){var t0=performance.now();function f(now){var k=Math.min(1,(now-t0)/ms);var e=1-Math.pow(1-k,3);num(fmt?fmt(from+(to-from)*e):Math.round(from+(to-from)*e));if(k<1)requestAnimationFrame(f);else res();}requestAnimationFrame(f);});}
+  function wait(ms){return new Promise(function(r){setTimeout(r,ms);});}
+
+  function pips(active,total){
+    var g=$('mlab-pips');if(!g)return;var s='';
+    for(var i=0;i<total;i++) s+='<span class="rounded-full transition-all duration-300" style="width:'+(i===active?'18px':'6px')+';height:6px;background:'+(i<=active?'#fff':'#2a2a2c')+'"></span>';
+    g.innerHTML=s;
+  }
+
+  function show(){var m=$('mlab');m.classList.remove('hidden');m.classList.add('flex');}
+  function hide(){var m=$('mlab');m.classList.add('hidden');m.classList.remove('flex');}
+
+  // ---- the trade-log analysis sequence ----
+  async function runTradeLog(meta){
+    meta=meta||{}; var nTrades=meta.trades||60, nConfigs=meta.configs||1, single=meta.single!==false&&(nConfigs<=1);
+    show(); clearScatter(); hideCurve(); setRing(0); num('','');
+    var steps=single?4:5;
+
+    // opening beat: ring sweeps in while dots stream into the field
+    pips(0,steps);
+    stage('Ingesting your trades', meta.name?meta.name:'reading every row');
+    drawScatter(nTrades, nTrades);
+    num(0,'TRADES');
+    setRing(.16);
+    await tick(0,nTrades,950); await wait(200);
+
+    pips(1,steps); stage('Measuring the edge','win rate · profit factor · expectancy');
+    num((meta.win||57),'WIN %'); $('mlab-numlabel').textContent='WIN %';
+    setRing(.34); await wait(750);
+
+    pips(2,steps); stage('Modeling the return curve','fitting the distribution');
+    clearScatter(); drawCurve(); num('σ','SHARPE'); 
+    await wait(850); setRing(.6);
+
+    if(!single){
+      pips(3,steps); stage('Deflating for the search','correcting '+nConfigs.toLocaleString()+' configurations');
+      hideCurve(); num(nConfigs>999?(nConfigs/1000).toFixed(1)+'k':nConfigs,'CONFIGS');
+      await wait(950); setRing(.8);
+      pips(4,steps); stage('Stress-testing costs','breakeven · sample size · regime');
+      num('✓','CHECKS'); await wait(750); setRing(1);
+    } else {
+      pips(3,steps); stage('Stress-testing costs','breakeven · sample size · regime');
+      hideCurve(); num('✓','CHECKS'); await wait(800); setRing(1);
+    }
+    stage('Verdict ready',''); await wait(350);
+    hide();
+  }
+
+  // ---- the plain-english analysis sequence ----
+  async function runPlainEnglish(){
+    show(); clearScatter(); hideCurve(); setRing(0); num('','');
+    var steps=5;
+    pips(0,steps); stage('Reading your strategy','mapping entry · exit · risk · edge');
+    drawScatter(40,21); setRing(.16); await wait(950);
+    pips(1,steps); stage('Probing for overfit risk','how many ways was this tuned?'); 
+    clearScatter(); drawCurve(); await wait(850); setRing(.4);
+    pips(2,steps); stage('Scoring five dimensions','data · logic · risk · edge · robustness');
+    hideCurve(); num(0,'SCORE'); await tick(0,100,900); setRing(.7); await wait(200);
+    pips(3,steps); stage('Weighing the evidence','assembling the verdict'); setRing(.88); await wait(650);
+    pips(4,steps); stage('Review ready',''); setRing(1); await wait(400);
+    hide();
+  }
+
+  return {runTradeLog:runTradeLog, runPlainEnglish:runPlainEnglish, hide:hide};
+})();
+</script>
+
+<script>
+/* ===== Embedded verdict view: activate when URL carries ?dsr=... ===== */
+(function(){
+  var p=new URLSearchParams(location.search);
+  if(!p.has('dsr') && !p.has('verdict')) return; // normal site load, skip
+  var vp=document.getElementById('verdict-page');
+  if(!vp) return;
+  vp.classList.remove('hidden');
+  document.documentElement.style.overflow='hidden';
+  // run the verdict render logic
+  try{
+(function(){
+  if(window.lucide&&window.lucide.createIcons)lucide.createIcons();
+  var q=new URLSearchParams(location.search);
+  // --- read verdict params with sensible fallbacks (demo defaults) ---
+  function num(k,d){var v=parseFloat(q.get(k));return isFinite(v)?v:d;}
+  var dsr   = clamp(num('dsr',87),0,100);          // real edge %
+  var naive = clamp(num('naive',99),0,100);        // naive significance %
+  var trades= Math.round(num('trades',520));
+  var win   = num('win',58.3);                       // win rate %
+  var configs=Math.round(num('configs',1));
+  var verdict=(q.get('verdict')||(dsr>=75?'Survives scrutiny':dsr>=40?'Fragile':'Likely overfit')).trim();
+  var over  = (q.get('over') ||(dsr>=95?'Pass':dsr>=75?'Watch':'Fail'));
+  var samp  = (q.get('samp') ||'Pass');
+  var cost  = (q.get('cost') ||'Pass');
+
+  function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+
+  // --- paint ---
+  document.getElementById('vb-verdict').textContent=verdict;
+  document.getElementById('vb-dsr').innerHTML=Math.round(dsr)+'<span class="text-2xl font-normal text-[var(--mut)]">%</span>';
+  document.getElementById('vb-naive-pct').textContent=Math.round(naive)+'%';
+  document.getElementById('vb-real-pct').textContent=Math.round(dsr)+'%';
+  document.getElementById('vb-trades').textContent=trades.toLocaleString();
+  document.getElementById('vb-win').textContent=win.toFixed(1)+'%';
+  document.getElementById('vb-configs').textContent=configs.toLocaleString();
+  document.getElementById('vb-over').textContent=over;
+  document.getElementById('vb-samp').textContent=samp;
+  document.getElementById('vb-cost').textContent=cost;
+  document.getElementById('badge-dsr').textContent=Math.round(dsr)+'%';
+  document.getElementById('vb-date').textContent=new Date().toLocaleDateString('en-US',{month:'short',year:'numeric'});
+
+  // verdict-driven accents (stay monochrome; weaker verdicts read dimmer)
+  var strong = dsr>=75;
+  if(!strong){
+    document.getElementById('vb-ring').setAttribute('stroke', dsr>=40?'#8b8b88':'#5a5a58');
+  }
+  function dot(id,flag){var el=document.getElementById(id);if(!el)return;
+    el.className='w-2 h-2 rounded-full '+(/pass/i.test(flag)?'bg-white':/watch|warn|fragile/i.test(flag)?'bg-[var(--mut)]':'bg-[#3a3a3a] border border-[var(--mut)]');}
+  dot('dot-over',over);dot('dot-samp',samp);dot('dot-cost',cost);
+
+  // gap copy
+  var gap=Math.max(0,Math.round(naive-dsr));
+  document.getElementById('vb-gap').innerHTML = strong
+    ? 'The edge largely holds up after the search &mdash; rare. Regime &amp; holdout testing still recommended.'
+    : 'A <span class="text-white">'+gap+'-point</span> gap between how good it looks and how real it is, once the search is accounted for.';
+
+  // animate ring + bars after first paint
+  requestAnimationFrame(function(){requestAnimationFrame(function(){
+    var C=2*Math.PI*52;
+    document.getElementById('vb-ring').style.strokeDashoffset = C*(1-dsr/100);
+    document.getElementById('vb-naive-bar').style.width=naive+'%';
+    document.getElementById('vb-real-bar').style.width=Math.max(dsr,1)+'%';
+  });});
+
+  // --- share + embed strings ---
+  var link=location.href;
+  document.getElementById('field-link').textContent=link;
+  var embed='<a href="'+link+'" style="display:inline-flex;align-items:center;gap:6px;font:600 11px/1 system-ui;text-decoration:none;color:#fff;background:#000;border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 12px">'
+    +'<svg viewBox="0 0 64 64" width="15" height="15" fill="none" stroke="#fff" stroke-width="4" style="vertical-align:middle"><circle cx="32" cy="32" r="25"/><path d="M21 40 V25 L32 33 L43 25 V40" stroke-width="4" stroke-linejoin="round"/></svg>Monrch-validated &middot; DSR '+Math.round(dsr)+'%</a>';
+  document.getElementById('field-embed').textContent=embed;
+
+  window.copyField=function(which){
+    var text= which==='link'?link:embed;
+    navigator.clipboard.writeText(text).then(function(){
+      var lbl=document.getElementById('lbl-'+which);var old=lbl.textContent;
+      lbl.textContent='Copied';setTimeout(function(){lbl.textContent=old;},1600);
+    }).catch(function(){
+      // fallback for non-secure contexts
+      var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);
+      var lbl=document.getElementById('lbl-'+which);var old=lbl.textContent;
+      lbl.textContent='Copied';setTimeout(function(){lbl.textContent=old;},1600);
+    });
+  };
+})();
+  }catch(e){console.warn('verdict view error',e);}
+})();
+</script>
+
+</body>
+</html>
